@@ -37,8 +37,8 @@
             this.saveAsSpriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toggleGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.drawingPanel = new olcEngineSpriteEditor.Cell();
             this.supportedColors = new olcEngineSpriteEditor.Cell();
+            this.drawingPanel = new olcEngineSpriteEditor.Cell();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -118,16 +118,6 @@
             this.toggleGridToolStripMenuItem.Text = "Toggle Grid";
             this.toggleGridToolStripMenuItem.Click += new System.EventHandler(this.toggleGridToolStripMenuItem_Click);
             // 
-            // drawingPanel
-            // 
-            this.drawingPanel.BorderColor = System.Drawing.Color.DimGray;
-            this.drawingPanel.BorderSize = 2;
-            this.drawingPanel.Clicked = false;
-            this.drawingPanel.Location = new System.Drawing.Point(1, 34);
-            this.drawingPanel.Name = "drawingPanel";
-            this.drawingPanel.Size = new System.Drawing.Size(576, 576);
-            this.drawingPanel.TabIndex = 3;
-            // 
             // supportedColors
             // 
             this.supportedColors.BackColor = System.Drawing.SystemColors.AppWorkspace;
@@ -138,6 +128,16 @@
             this.supportedColors.Name = "supportedColors";
             this.supportedColors.Size = new System.Drawing.Size(256, 64);
             this.supportedColors.TabIndex = 4;
+            // 
+            // drawingPanel
+            // 
+            this.drawingPanel.BorderColor = System.Drawing.Color.DimGray;
+            this.drawingPanel.BorderSize = 2;
+            this.drawingPanel.Clicked = false;
+            this.drawingPanel.Location = new System.Drawing.Point(1, 34);
+            this.drawingPanel.Name = "drawingPanel";
+            this.drawingPanel.Size = new System.Drawing.Size(576, 576);
+            this.drawingPanel.TabIndex = 3;
             // 
             // MainForm
             // 

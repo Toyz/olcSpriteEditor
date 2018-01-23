@@ -5,6 +5,19 @@ namespace olcEngineSpriteEditor
 {
     public static class Helpers
     {
+        public static short ToShort(ConsoleColor backgroundColor, ConsoleColor forgroundColor)
+        {
+            return (short)(((byte)backgroundColor << 4) | (byte)forgroundColor);
+        }
+
+        public static void FromShort(short color, out ConsoleColor backgroundColor, out ConsoleColor forgroundColor)
+        {
+            byte fg = (byte)(color & 0x0f);
+            byte bg = (byte)((color >> 4) & 0x0f);
+            backgroundColor = (ConsoleColor)bg;
+            forgroundColor = (ConsoleColor)fg;
+        }
+
         public static ConsoleColor ToConsoleColor(this Color c)
         {
             int index = (c.R > 128 | c.G > 128 | c.B > 128) ? 8 : 0; // Bright bit

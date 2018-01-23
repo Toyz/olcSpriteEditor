@@ -10,12 +10,14 @@ namespace olcEngineSpriteEditor
         public readonly int CellSpriteSize = 32;
         private readonly int CellColorSize = 32;
         private Color _selectedColor = Color.Black;
+
         private Color _borderGridColor = Color.Transparent;
         private bool _showGrid;
 
         public MainForm()
         {
             InitializeComponent();
+
 
             LoadedSprite = new Sprite(drawingPanel.Width / CellSpriteSize, drawingPanel.Height / CellSpriteSize);
             DrawSpriteInPanel();
@@ -102,8 +104,12 @@ namespace olcEngineSpriteEditor
             {
                 for (var j = 0; j < LoadedSprite.Height; j++)
                 {
-                    var cColor = (ConsoleColor) LoadedSprite.GetColour(i, j);
-                    var color = cColor.ToDrawingColor();
+                    var cColor = LoadedSprite.GetColour(i, j);
+                    ConsoleColor fg;
+                    ConsoleColor bg;
+                    Helpers.FromShort(cColor, out bg, out fg);
+
+                    var color = bg.ToDrawingColor();
                     var cell = createPanel(color);
                     cell.Location = new Point(i * CellSpriteSize, j * CellSpriteSize);
                     cell.BackColor = color;
