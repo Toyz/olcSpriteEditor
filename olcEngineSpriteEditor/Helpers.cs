@@ -18,6 +18,14 @@ namespace olcEngineSpriteEditor
             forgroundColor = (ConsoleColor)fg;
         }
 
+        public static Color Blend(this Color color, Color backColor, double amount)
+        {
+            byte r = (byte)((color.R * amount) + backColor.R * (1 - amount));
+            byte g = (byte)((color.G * amount) + backColor.G * (1 - amount));
+            byte b = (byte)((color.B * amount) + backColor.B * (1 - amount));
+            return Color.FromArgb(r, g, b);
+        }
+
         public static ConsoleColor ToConsoleColor(this Color c)
         {
             int index = (c.R > 128 | c.G > 128 | c.B > 128) ? 8 : 0; // Bright bit

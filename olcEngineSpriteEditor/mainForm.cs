@@ -105,11 +105,9 @@ namespace olcEngineSpriteEditor
                 for (var j = 0; j < LoadedSprite.Height; j++)
                 {
                     var cColor = LoadedSprite.GetColour(i, j);
-                    ConsoleColor fg;
-                    ConsoleColor bg;
-                    Helpers.FromShort(cColor, out bg, out fg);
+                    Helpers.FromShort(cColor, out var bg, out var fg);
 
-                    var color = bg.ToDrawingColor();
+                    var color = bg.ToDrawingColor().Blend(fg.ToDrawingColor(), 0.5);
                     var cell = createPanel(color);
                     cell.Location = new Point(i * CellSpriteSize, j * CellSpriteSize);
                     cell.BackColor = color;
