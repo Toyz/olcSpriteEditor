@@ -55,7 +55,7 @@ namespace SPE
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
             var width = (int)(ColorViewCanvas.Width / Sprite.SpriteBlockSize);
-            var height = ColourHandler.SystemColours.Count / width;
+            var height = ColourHandler.Colours.Count / width;
             ColorViewCanvas.Height = height * Sprite.SpriteBlockSize;
 
             var colorIdx = 0;
@@ -63,7 +63,7 @@ namespace SPE
             {
                 for (var i = 0; i < width; i++)
                 {
-                    var c = ColourHandler.SystemColours[colorIdx];
+                    var c = ColourHandler.Colours[colorIdx];
 
                     var rect = new Rectangle
                     {
