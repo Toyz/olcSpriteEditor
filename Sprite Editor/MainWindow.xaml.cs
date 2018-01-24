@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -238,7 +239,7 @@ namespace SPE
                     }
 
                     break;
-
+                case "ToggleCanvasGrid":
                 case "ToggleGridView":
                     ToggleSpriteGrid();
                     break;
@@ -326,7 +327,8 @@ namespace SPE
 
         private void ToggleSpriteGrid()
         {
-            Default.UseGridOnCanvas = ToggleCanvasGrid.IsChecked = !ToggleCanvasGrid.IsChecked;
+            ToggleCanvasGrid.IsChecked = !Default.UseGridOnCanvas;
+            Default.UseGridOnCanvas = ToggleCanvasGrid.IsChecked;
 
             if (Default.UseGridOnCanvas)
             {
@@ -342,7 +344,7 @@ namespace SPE
                 {
                     var rect = (Rectangle)child;
                     var brush = (SolidColorBrush) rect.Stroke;
-                    if(brush.Color == ((SolidColorBrush)_hoverBrush).Color) continue;
+                    if (brush.Color == ((SolidColorBrush) _hoverBrush).Color) continue;
 
                     rect.Stroke = null;
                 }
