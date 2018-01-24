@@ -55,7 +55,11 @@ namespace SPE
             ToggleCanvasGrid.IsChecked = Default.UseGridOnCanvas;
 
             foreach (var line in File.ReadAllLines("./colours.txt"))
+            {
+                if(line.StartsWith("#") || string.IsNullOrEmpty(line)) continue;
+                
                 SystemColours.Add(new Colour(line));
+            }
 
             _activeColour = SystemColours.FirstOrDefault(x => x.Hex == "000000");
 
