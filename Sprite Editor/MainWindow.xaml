@@ -33,15 +33,11 @@
             </Menu>
             <Grid>
                 <ScrollViewer Focusable="False" Name="SpriteScrollViewer" Margin="0,0,250,0" VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Auto">
-                    <DockPanel>
-                        <Canvas RenderOptions.EdgeMode="Aliased" Name="SpriteViewCanvas"  />
-                    </DockPanel>
+                    <Canvas RenderOptions.EdgeMode="Aliased"  Name="SpriteViewCanvas"  />
                 </ScrollViewer>
 
                 <ScrollViewer  Focusable="False"  Name="ColorScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Right" Width="241" Height="275" VerticalAlignment="Top" Margin="0,25,4,0">
-                    <DockPanel>
-                        <Canvas RenderOptions.EdgeMode="Aliased" DockPanel.Dock="Top,Left" Name="ColorViewCanvas"  />
-                    </DockPanel>
+                      <Canvas RenderOptions.EdgeMode="Aliased" Name="ColorViewCanvas"  />
                 </ScrollViewer>
                 <Label Content="Color Picker" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Right" Width="245"/>
             </Grid>
