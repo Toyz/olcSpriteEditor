@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace SPE
@@ -47,7 +48,7 @@ namespace SPE
         PIXEL_QUARTER = 0x2591
     }
 
-    public class Colour
+    public class Colour : IEquatable<Colour>
     {
         public Colour(int r, int g, int b, Colours fg, Colours bg, Pixal type)
         {
@@ -84,5 +85,43 @@ namespace SPE
         public Color Color => Color.FromRgb((byte)R, (byte)G, (byte)B);
         public short Code => (short)((byte)BG | (byte)FG);
 
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Colour);
+        }
+
+        public bool Equals(Colour other)
+        {
+            return other != null &&
+                   R == other.R &&
+                   G == other.G &&
+                   B == other.B &&
+                   FG == other.FG &&
+                   BG == other.BG &&
+                   PT == other.PT &&
+                   Hex == other.Hex &&
+                   Color.Equals(other.Color) &&
+                   Code == other.Code;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 29083839;
+            hashCode = hashCode * -1521134295 + R.GetHashCode();
+            hashCode = hashCode * -1521134295 + G.GetHashCode();
+            hashCode = hashCode * -1521134295 + B.GetHashCode();
+            hashCode = hashCode * -1521134295 + FG.GetHashCode();
+            hashCode = hashCode * -1521134295 + BG.GetHashCode();
+            hashCode = hashCode * -1521134295 + PT.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Hex);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Color>.Default.GetHashCode(Color);
+            hashCode = hashCode * -1521134295 + Code.GetHashCode();
+            return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return $"HEX: {Hex} RGB: {R}, {G}, {B} Code: {Code}";
+        }
     }
 }

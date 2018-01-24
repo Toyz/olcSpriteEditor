@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -19,35 +19,12 @@ namespace SPE
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    public partial class MainWindow : Window
     {
-        public static readonly RoutedCommand OpenCommand = new RoutedUICommand("Open", "OpenSprite", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
-        {
-               new KeyGesture(Key.O, ModifierKeys.Control)
-        }));
-
-        public static readonly RoutedCommand ExportCommand = new RoutedUICommand("Export", "ExportSprite", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
-        {
-            new KeyGesture(Key.E, ModifierKeys.Control | ModifierKeys.Alt)
-        }));
-
-        public static readonly RoutedCommand SaveCommand = new RoutedUICommand("Save", "SaveSprite", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
-        {
-            new KeyGesture(Key.S, ModifierKeys.Control)
-        }));
-
-        public static readonly RoutedCommand SaveAsCommand = new RoutedUICommand("Save As", "SaveAsSprite", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
-        {
-            new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift)
-        }));
-
-        public static readonly RoutedCommand ToggleGridCommand = new RoutedUICommand("Toggle Canvas Grid", "ToggleGridView", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
-        {
-            new KeyGesture(Key.T, ModifierKeys.Control | ModifierKeys.Alt)
-        }));
-
-        public Sprite LoadedSprite { get; private set; }
+        public Sprite LoadedSprite { get; set; }
         public static List<Colour> SystemColours = new List<Colour>();
+
+        public readonly WindowDataContext WindowDataContext = new WindowDataContext();
 
         private Colour _activeColour;
         private readonly Brush _gridColorBrush = new SolidColorBrush(Colors.White);
@@ -58,6 +35,8 @@ namespace SPE
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = WindowDataContext;
+
             LoadRecentsFilesList();
 
             ToggleCanvasGrid.IsChecked = Default.UseGridOnCanvas;
@@ -69,11 +48,20 @@ namespace SPE
                 SystemColours.Add(new Colour(line));
             }
 
-            _activeColour = SystemColours.FirstOrDefault(x => x.Hex == "000000");
+            CreateColorPalletWindow();
+           
+            LoadedSprite = new Sprite(10, 10);
+            UpdateCanvas();
 
+            WindowDataContext.CurrentProgramStatus = "Loaded Empty Sprite";
+        }
+
+        private void CreateColorPalletWindow()
+        {
+            _activeColour = SystemColours.FirstOrDefault(x => x.Hex == "000000");
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
-            var width = (int) (ColorViewCanvas.Width / Sprite.SpriteBlockSize);
+            var width = (int)(ColorViewCanvas.Width / Sprite.SpriteBlockSize);
             var height = SystemColours.Count / width;
             ColorViewCanvas.Height = height * Sprite.SpriteBlockSize;
 
@@ -89,12 +77,13 @@ namespace SPE
                         Width = Sprite.SpriteBlockSize,
                         Height = Sprite.SpriteBlockSize,
                         Fill = new SolidColorBrush(c.Color),
-                        Stroke = _colorBorder
+                        Stroke = _colorBorder,
+                        StrokeThickness = 1.2
                     };
 
                     rect.MouseEnter += (sender, args) =>
                     {
-                        var brush = rect.Stroke as SolidColorBrush;
+                        var brush = (SolidColorBrush)rect.Stroke;
                         if (Equals(brush.Color, Colors.Red)) return;
 
                         rect.Stroke = _hoverBrush;
@@ -102,7 +91,7 @@ namespace SPE
 
                     rect.MouseLeave += (sender, args) =>
                     {
-                        var brush = rect.Stroke as SolidColorBrush;
+                        var brush = (SolidColorBrush)rect.Stroke;
                         if (Equals(brush.Color, Colors.Red)) return;
 
                         rect.Stroke = _colorBorder;
@@ -110,21 +99,19 @@ namespace SPE
 
                     rect.MouseUp += (sender, args) =>
                     {
-                        var p = (Rectangle) sender;
+                        var p = (Rectangle)sender;
 
                         p.Stroke = _activeColor;
                         _activeColour = c;
 
                         foreach (var child in ColorViewCanvas.Children)
                         {
-                            var r = (Rectangle) child;
-                            if(Equals(r, p)) continue; 
+                            var r = (Rectangle)child;
+                            if (Equals(r, p)) continue;
 
-                            if (Equals(r.Stroke, _activeColor))
-                            {
-                                r.Stroke = _colorBorder;
-                                break;
-                            }
+                            if (!Equals(r.Stroke, _activeColor)) continue;
+                            r.Stroke = _colorBorder;
+                            break;
 
                         }
                     };
@@ -141,12 +128,9 @@ namespace SPE
                     colorIdx++;
                 }
             }
-
-            LoadedSprite = new Sprite(10, 10);
-            Draw();
         }
 
-        private void Draw()
+        private void UpdateCanvas()
         {
             SpriteViewCanvas.IsEnabled = false;
             SpriteViewCanvas.Width = LoadedSprite.Width * Sprite.SpriteBlockSize;
@@ -156,6 +140,9 @@ namespace SPE
             {
                 for (var j = 0; j < LoadedSprite.Width; j++)
                 {
+                    var i1 = j;
+                    var j1 = i;
+
                     var c = LoadedSprite.GetColour(j, i);
                     var correctColor = SystemColours.FirstOrDefault(x => x.Code == c);
 
@@ -164,6 +151,7 @@ namespace SPE
                         Width = Sprite.SpriteBlockSize,
                         Height = Sprite.SpriteBlockSize,
                         Fill = new SolidColorBrush(correctColor.Color),    
+                        StrokeThickness = 2
                     };
 
                     if (Default.UseGridOnCanvas)
@@ -176,8 +164,6 @@ namespace SPE
                         rect.Stroke = _hoverBrush;
                     };
 
-                    var i1 = j;
-                    var j1 = i;
                     rect.MouseDown += (sender, args) =>
                     {
                         rect.Fill = new SolidColorBrush(_activeColour.Color);
@@ -234,8 +220,8 @@ namespace SPE
                         LoadedSprite = new Sprite(ofd.FileName);
                         SpriteViewCanvas.Children.Clear();
                         SaveToRecentsList(ofd.FileName);
-
-                        Draw();
+                        WindowDataContext.CurrentProgramStatus = $"Loaded: {Path.GetFileName(ofd.FileName)}";
+                        UpdateCanvas();
                     }
 
                     break;
@@ -244,45 +230,64 @@ namespace SPE
                     ToggleSpriteGrid();
                     break;
                 case "ExportSprite":
-                    var sfd = new SaveFileDialog
-                    {
-                        Title = "Export Sprite File as PNG",
-                        Filter = "PNG File (*.png)|*.png|JPG File (*.jpg)|*.jpg",
-                        FileName = "Export",
-                        AddExtension = true
-                    };
-
-                    if (sfd.ShowDialog() == true)
-                    {
-                        var file = sfd.FileName;
-
-                        Bitmap flag = new Bitmap(LoadedSprite.Width * Sprite.SpriteBlockSize, LoadedSprite.Height * Sprite.SpriteBlockSize);
-                        flag.SetResolution(100, 100);
-                        Graphics flagGraphics = Graphics.FromImage(flag);
-
-                        for (var i = 0; i < LoadedSprite.Width; i++)
-                        {
-                            for (var j = 0; j < LoadedSprite.Height; j++)
-                            {
-                                var c = LoadedSprite.GetColour(i, j);
-                                var correctColor = SystemColours.FirstOrDefault(x => x.Code == c);
-
-                                flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), new RectangleF(i * Sprite.SpriteBlockSize, j * Sprite.SpriteBlockSize, Sprite.SpriteBlockSize , Sprite.SpriteBlockSize));
-                            }
-                        }
-
-                        switch (Path.GetExtension(file).Split('.').Last().ToLower())
-                        {
-                            case "png":
-                                flag.Save(file, ImageFormat.Png);
-                                break;
-                            case "jpg":
-                                flag.Save(file, ImageFormat.Jpeg);
-                                break;
-                        }
-                        //Helpers.SaveCanvas(this, SpriteViewCanvas, 100, file);
-                    }
+                    ExportSpriteAsImage();
                     break;
+                case "NewSprite":
+                    CreateNewSprite();
+                    break;
+            }
+        }
+
+        private void CreateNewSprite()
+        {
+            var newSpriteDialog = new Dialogs.NewSpriteDialog(this) {Owner = this};
+
+            if (newSpriteDialog.ShowDialog() == true)
+            {
+                // Dp thing with the data...
+                SpriteViewCanvas.Children.Clear();
+                UpdateCanvas();
+            }
+        }
+
+        private void ExportSpriteAsImage()
+        {
+            var sfd = new SaveFileDialog
+            {
+                Title = "Export Sprite File as PNG",
+                Filter = "PNG File (*.png)|*.png|JPG File (*.jpg)|*.jpg",
+                FileName = "Export",
+                AddExtension = true
+            };
+
+            if (sfd.ShowDialog() == true)
+            {
+                var file = sfd.FileName;
+
+                Bitmap flag = new Bitmap(LoadedSprite.Width * Sprite.SpriteBlockSize, LoadedSprite.Height * Sprite.SpriteBlockSize);
+                flag.SetResolution(100, 100);
+                Graphics flagGraphics = Graphics.FromImage(flag);
+
+                for (var i = 0; i < LoadedSprite.Width; i++)
+                {
+                    for (var j = 0; j < LoadedSprite.Height; j++)
+                    {
+                        var c = LoadedSprite.GetColour(i, j);
+                        var correctColor = SystemColours.First(x => x.Code == c);
+
+                        flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), new RectangleF(i * Sprite.SpriteBlockSize, j * Sprite.SpriteBlockSize, Sprite.SpriteBlockSize, Sprite.SpriteBlockSize));
+                    }
+                }
+
+                switch (Path.GetExtension(file).Split('.').Last().ToLower())
+                {
+                    case "png":
+                        flag.Save(file, ImageFormat.Png);
+                        break;
+                    case "jpg":
+                        flag.Save(file, ImageFormat.Jpeg);
+                        break;
+                }
             }
         }
 
@@ -322,6 +327,8 @@ namespace SPE
 
                 SaveToRecentsList(file);
                 LoadedSprite.Save(file);
+                WindowDataContext.CurrentProgramStatus = $"Saved: {Path.GetFileName(file)}";
+
             }
         }
 
@@ -363,7 +370,6 @@ namespace SPE
 
             foreach (var item in Default.RecentFiles)
             {
-
                 RecentFilesList.Items.Insert(0, CreateRecentItem(item));
             }
         }
@@ -372,7 +378,7 @@ namespace SPE
         {
             var mItem = new MenuItem
             {
-                Header = System.IO.Path.GetFileName(item),
+                Header = Path.GetFileName(item),
                 Tag = item
             };
 
@@ -389,12 +395,13 @@ namespace SPE
                 }
 
                 LoadedSprite = new Sprite(file);
+                WindowDataContext.CurrentProgramStatus = $"Loaded: {Path.GetFileName(file)}";
+
                 SpriteViewCanvas.Children.Clear();
-                Draw();
+                UpdateCanvas();
             };
 
             return mItem;
         }
-
     }
 }

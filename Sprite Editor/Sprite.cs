@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace SPE
 {
-    public class Sprite
+    public class Sprite : IEquatable<Sprite>
     {
         public static int SpriteBlockSize { get; } = 32;
 
@@ -113,6 +114,42 @@ namespace SPE
             return $"Width: {Width} Height: {Height} " +
                    $"Colours: {string.Join(",", Colours)} " +
                    $"Glyphs: {string.Join(",", Glyphs)}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Sprite);
+        }
+
+        public bool Equals(Sprite other)
+        {
+            return other != null &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   EqualityComparer<short[]>.Default.Equals(Colours, other.Colours) &&
+                   EqualityComparer<char[]>.Default.Equals(Glyphs, other.Glyphs) &&
+                   File == other.File;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 265894640;
+            hashCode = hashCode * -1521134295 + Width.GetHashCode();
+            hashCode = hashCode * -1521134295 + Height.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<short[]>.Default.GetHashCode(Colours);
+            hashCode = hashCode * -1521134295 + EqualityComparer<char[]>.Default.GetHashCode(Glyphs);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(File);
+            return hashCode;
+        }
+
+        public static bool operator ==(Sprite x, Sprite y)
+        {
+            return x != null && x.Equals(y);
+        }
+
+        public static bool operator !=(Sprite x, Sprite y)
+        {
+            return !(x == y);
         }
     }
 
