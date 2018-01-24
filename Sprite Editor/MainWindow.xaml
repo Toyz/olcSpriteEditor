@@ -11,6 +11,7 @@
         <CommandBinding Command="{x:Static local:MainWindow.SaveCommand}" Executed="FileOptionClicked"/>
         <CommandBinding Command="{x:Static local:MainWindow.SaveAsCommand}" Executed="FileOptionClicked"/>
         <CommandBinding Command="{x:Static local:MainWindow.ToggleGridCommand}" Executed="FileOptionClicked"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ExportCommand}" Executed="FileOptionClicked"/>
     </Window.CommandBindings>
     <Grid>
         <DockPanel>
@@ -21,6 +22,8 @@
                     <MenuItem Command="{x:Static local:MainWindow.SaveCommand}"/>
                     <MenuItem Command="{x:Static local:MainWindow.SaveAsCommand}"/>
                     <Separator />
+                    <MenuItem Command="{x:Static local:MainWindow.ExportCommand}"/>
+                    <Separator />
                     <MenuItem Name="RecentFilesList" Header="_Recent Files" />
                 </MenuItem>
 
@@ -29,13 +32,13 @@
                 </MenuItem>
             </Menu>
             <Grid>
-                <ScrollViewer Name="SpriteScrollViewer" Margin="0,0,250,0" VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Auto">
+                <ScrollViewer Focusable="False" Name="SpriteScrollViewer" Margin="0,0,250,0" VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Auto">
                     <DockPanel>
                         <Canvas RenderOptions.EdgeMode="Aliased" Name="SpriteViewCanvas"  />
                     </DockPanel>
                 </ScrollViewer>
 
-                <ScrollViewer Name="ColorScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Right" Width="241" Height="275" VerticalAlignment="Top" Margin="0,25,4,0">
+                <ScrollViewer  Focusable="False"  Name="ColorScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Right" Width="241" Height="275" VerticalAlignment="Top" Margin="0,25,4,0">
                     <DockPanel>
                         <Canvas RenderOptions.EdgeMode="Aliased" DockPanel.Dock="Top,Left" Name="ColorViewCanvas"  />
                     </DockPanel>

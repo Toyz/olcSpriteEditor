@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using Microsoft.Win32;
 using static SPE.Properties.Settings;
+using Brush = System.Windows.Media.Brush;
+using Rectangle = System.Windows.Shapes.Rectangle;
 
 namespace SPE
 {
@@ -20,7 +22,12 @@ namespace SPE
     {
         public static readonly RoutedCommand OpenCommand = new RoutedUICommand("Open", "OpenSprite", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
         {
-            new KeyGesture(Key.O, ModifierKeys.Control)
+               new KeyGesture(Key.O, ModifierKeys.Control)
+        }));
+
+        public static readonly RoutedCommand ExportCommand = new RoutedUICommand("Export", "ExportSprite", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
+        {
+            new KeyGesture(Key.E, ModifierKeys.Control | ModifierKeys.Alt)
         }));
 
         public static readonly RoutedCommand SaveCommand = new RoutedUICommand("Save", "SaveSprite", typeof(MenuItem), new InputGestureCollection(new InputGesture[]
@@ -235,8 +242,47 @@ namespace SPE
                 case "ToggleGridView":
                     ToggleSpriteGrid();
                     break;
+                case "ExportSprite":
+                    var sfd = new SaveFileDialog
+                    {
+                        Title = "Export Sprite File as PNG",
+                        Filter = "PNG File (*.png)|*.png|JPG File (*.jpg)|*.jpg",
+                        FileName = "Export",
+                        AddExtension = true
+                    };
+
+                    if (sfd.ShowDialog() == true)
+                    {
+                        var file = sfd.FileName;
+
+                        Bitmap flag = new Bitmap(LoadedSprite.Width * Sprite.SpriteBlockSize, LoadedSprite.Height * Sprite.SpriteBlockSize);
+                        flag.SetResolution(100, 100);
+                        Graphics flagGraphics = Graphics.FromImage(flag);
+
+                        for (var i = 0; i < LoadedSprite.Width; i++)
+                        {
+                            for (var j = 0; j < LoadedSprite.Height; j++)
+                            {
+                                var c = LoadedSprite.GetColour(i, j);
+                                var correctColor = SystemColours.FirstOrDefault(x => x.Code == c);
+
+                                flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), new RectangleF(i * Sprite.SpriteBlockSize, j * Sprite.SpriteBlockSize, Sprite.SpriteBlockSize , Sprite.SpriteBlockSize));
+                            }
+                        }
+
+                        switch (Path.GetExtension(file).Split('.').Last().ToLower())
+                        {
+                            case "png":
+                                flag.Save(file, ImageFormat.Png);
+                                break;
+                            case "jpg":
+                                flag.Save(file, ImageFormat.Jpeg);
+                                break;
+                        }
+                        //Helpers.SaveCanvas(this, SpriteViewCanvas, 100, file);
+                    }
+                    break;
             }
-            Console.WriteLine(LoadedSprite);
         }
 
         private void SaveToRecentsList(string file)
@@ -265,16 +311,13 @@ namespace SPE
             {
                 Title = "Save Sprite File",
                 Filter = "Sprite File (*.spr)|*.spr",
-                FileName = "Default.spr"
+                FileName = "Default.spr",
+                AddExtension = true
             };
 
             if (sfd.ShowDialog() == true)
             {
                 var file = sfd.FileName;
-                if (!file.ToLower().EndsWith(".spr"))
-                {
-                    file += ".spr";
-                }
 
                 SaveToRecentsList(file);
                 LoadedSprite.Save(file);
