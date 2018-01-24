@@ -45,5 +45,29 @@ namespace SPE.Properties {
                 this["RecentFiles"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int Create_W {
+            get {
+                return ((int)(this["Create_W"]));
+            }
+            set {
+                this["Create_W"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int Create_H {
+            get {
+                return ((int)(this["Create_H"]));
+            }
+            set {
+                this["Create_H"] = value;
+            }
+        }
     }
 }

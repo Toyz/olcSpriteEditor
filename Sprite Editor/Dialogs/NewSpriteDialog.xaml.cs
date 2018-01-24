@@ -18,6 +18,9 @@ namespace SPE.Dialogs
             DataContext = mainWindow.WindowDataContext;
             NumberPickerWidth.Maxvalue = 256;
             NumberPickerHeight.Maxvalue = 256;
+
+            NumberPickerHeight.Value = Properties.Settings.Default.Create_H;
+            NumberPickerWidth.Value = Properties.Settings.Default.Create_W;
         }
 
         private void HandleButton_Clicked(object sender, RoutedEventArgs e)
@@ -28,7 +31,12 @@ namespace SPE.Dialogs
             {
                 case "CreateSprite":
                     _mainWindow.LoadedSprite = new Sprite(NumberPickerWidth.Value, NumberPickerHeight.Value);
+                    Properties.Settings.Default.Create_H = _mainWindow.LoadedSprite.Height;
+                    Properties.Settings.Default.Create_W = _mainWindow.LoadedSprite.Width;
+
                     _mainWindow.WindowDataContext.CurrentProgramStatus = $"Created {_mainWindow.LoadedSprite.Width}x{_mainWindow.LoadedSprite.Height} Sprite";
+
+                    Properties.Settings.Default.Save();
                     DialogResult = true;
                     break;
                 case "CancelSprite":

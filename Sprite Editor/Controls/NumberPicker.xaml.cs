@@ -13,7 +13,18 @@ namespace SPE.Controls
     public partial class NumberPicker
     {
         public int Minvalue = 1, Maxvalue = 100, Startvalue = 10;
-        public int Value { get; private set; }
+
+        private int _value;
+        public int Value
+        {
+            get => _value;
+            set
+            {
+                _value = value.Clamp(Minvalue, Maxvalue);
+
+                NUDTextBox.Text = _value.ToString();
+            }
+        }
 
         public NumberPicker()
         {
