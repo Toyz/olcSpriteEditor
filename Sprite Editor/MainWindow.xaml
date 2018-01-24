@@ -1,0 +1,47 @@
+﻿<Window x:Class="SPE.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SPE"
+        mc:Ignorable="d"
+        Title="Sprite Editor for OLC - Neon" Height="600" Width="800" MinHeight="600" MinWidth="800" WindowStartupLocation="CenterScreen">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.OpenCommand}" Executed="FileOptionClicked"/>
+        <CommandBinding Command="{x:Static local:MainWindow.SaveCommand}" Executed="FileOptionClicked"/>
+        <CommandBinding Command="{x:Static local:MainWindow.SaveAsCommand}" Executed="FileOptionClicked"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ToggleGridCommand}" Executed="FileOptionClicked"/>
+    </Window.CommandBindings>
+    <Grid>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="File">
+                    <MenuItem Command="{x:Static local:MainWindow.OpenCommand}"/>
+                    <Separator />
+                    <MenuItem Command="{x:Static local:MainWindow.SaveCommand}"/>
+                    <MenuItem Command="{x:Static local:MainWindow.SaveAsCommand}"/>
+                    <Separator />
+                    <MenuItem Name="RecentFilesList" Header="_Recent Files" />
+                </MenuItem>
+
+                <MenuItem Header="Tools">
+                    <MenuItem Name="ToggleCanvasGrid" IsCheckable="True" IsChecked="False" Command="{x:Static local:MainWindow.ToggleGridCommand}"/>
+                </MenuItem>
+            </Menu>
+            <Grid>
+                <ScrollViewer Name="SpriteScrollViewer" Margin="0,0,250,0" VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Auto">
+                    <DockPanel>
+                        <Canvas RenderOptions.EdgeMode="Aliased" Name="SpriteViewCanvas"  />
+                    </DockPanel>
+                </ScrollViewer>
+
+                <ScrollViewer Name="ColorScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Right" Width="241" Height="275" VerticalAlignment="Top" Margin="0,25,4,0">
+                    <DockPanel>
+                        <Canvas RenderOptions.EdgeMode="Aliased" DockPanel.Dock="Top,Left" Name="ColorViewCanvas"  />
+                    </DockPanel>
+                </ScrollViewer>
+                <Label Content="Color Picker" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Right" Width="245"/>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>

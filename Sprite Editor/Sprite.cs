@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
-namespace olcEngineSpriteEditor
+namespace SPE
 {
     public class Sprite
     {
+        public static int SpriteBlockSize { get; } = 32;
+
         public int Width { get; private set; }
         public int Height { get; private set; }
         public short[] Colours { get; private set; }
@@ -27,21 +30,35 @@ namespace olcEngineSpriteEditor
 
             Colours = new short[Width * Height];
 
-            for (var i = 0; i < Colours.Length; i++) Colours[i] = (short) ConsoleColor.Black;
+            var black = MainWindow.SystemColours.FirstOrDefault(x => x.Hex == "000000");
+
+            for (var i = 0; i < Colours.Length; i++) Colours[i] = black.Code;
 
             Glyphs = new char[Width * Height];
         }
 
         public short GetColour(int x, int y)
         {
-            return x < 0 || x > Width || y < 0 || y > Height ? (short) 0 : Colours[y * Width + x];
+            return x < 0 || x > Width || y < 0 || y > Height ? (short)0 : Colours[y * Width + x];
         }
 
-        public void SetColour(int x, int y, short color)
+        public void SetColour(int x, int y, Colour color)
         {
             if (x < 0 || x > Width || y < 0 || y > Height)
                 return;
-            Colours[y * Width + x] = color;
+            Colours[y * Width + x] = color.Code;
+        }
+
+        public char GetGlyph(int x, int y)
+        {
+            return x < 0 || x > Width || y < 0 || y > Height ? (char)0 : Glyphs[y * Width + x];
+        }
+
+        public void SetGlyph(int x, int y, Pixal glyph)
+        {
+            if (x < 0 || x > Width || y < 0 || y > Height)
+                return;
+            Glyphs[y * Width + x] = (char) glyph;
         }
 
         public void Save()
