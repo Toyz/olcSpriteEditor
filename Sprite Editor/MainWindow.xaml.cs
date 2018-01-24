@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -10,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
+using SPE.Engine;
 using static SPE.Properties.Settings;
 using Brush = System.Windows.Media.Brush;
 using Rectangle = System.Windows.Shapes.Rectangle;
@@ -22,7 +21,6 @@ namespace SPE
     public partial class MainWindow : Window
     {
         public Sprite LoadedSprite { get; set; }
-        public static List<Colour> SystemColours = new List<Colour>();
 
         public readonly WindowDataContext WindowDataContext = new WindowDataContext();
 
@@ -35,18 +33,12 @@ namespace SPE
         public MainWindow()
         {
             InitializeComponent();
+
             DataContext = WindowDataContext;
 
             LoadRecentsFilesList();
 
             ToggleCanvasGrid.IsChecked = Default.UseGridOnCanvas;
-
-            foreach (var line in File.ReadAllLines("./colours.txt"))
-            {
-                if(line.StartsWith("#") || string.IsNullOrEmpty(line)) continue;
-                
-                SystemColours.Add(new Colour(line));
-            }
 
             CreateColorPalletWindow();
            
@@ -58,11 +50,12 @@ namespace SPE
 
         private void CreateColorPalletWindow()
         {
-            _activeColour = SystemColours.FirstOrDefault(x => x.Hex == "000000");
+            _activeColour = ColourHandler.GetByHex("000000");
+
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
             var width = (int)(ColorViewCanvas.Width / Sprite.SpriteBlockSize);
-            var height = SystemColours.Count / width;
+            var height = ColourHandler.SystemColours.Count / width;
             ColorViewCanvas.Height = height * Sprite.SpriteBlockSize;
 
             var colorIdx = 0;
@@ -70,7 +63,7 @@ namespace SPE
             {
                 for (var i = 0; i < width; i++)
                 {
-                    var c = SystemColours[colorIdx];
+                    var c = ColourHandler.SystemColours[colorIdx];
 
                     var rect = new Rectangle
                     {
@@ -144,7 +137,7 @@ namespace SPE
                     var j1 = i;
 
                     var c = LoadedSprite.GetColour(j, i);
-                    var correctColor = SystemColours.FirstOrDefault(x => x.Code == c);
+                    var correctColor = ColourHandler.GetByCode(c);
 
                     var rect = new Rectangle
                     {
@@ -273,7 +266,7 @@ namespace SPE
                     for (var j = 0; j < LoadedSprite.Height; j++)
                     {
                         var c = LoadedSprite.GetColour(i, j);
-                        var correctColor = SystemColours.First(x => x.Code == c);
+                        var correctColor = ColourHandler.GetByCode(c);
 
                         flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), new RectangleF(i * Sprite.SpriteBlockSize, j * Sprite.SpriteBlockSize, Sprite.SpriteBlockSize, Sprite.SpriteBlockSize));
                     }

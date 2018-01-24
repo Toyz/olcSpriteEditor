@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SPE
+namespace SPE.Engine
 {
     public class Sprite : IEquatable<Sprite>
     {
@@ -31,8 +31,8 @@ namespace SPE
 
             Colours = new short[Width * Height];
 
-            var black = MainWindow.SystemColours.FirstOrDefault(x => x.Hex == "000000");
-
+            var black = ColourHandler.GetByHex("000000");
+        
             for (var i = 0; i < Colours.Length; i++) Colours[i] = black.Code;
 
             Glyphs = new char[Width * Height];

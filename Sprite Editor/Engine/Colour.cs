@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace SPE
+namespace SPE.Engine
 {
     public enum Colours : short
     {

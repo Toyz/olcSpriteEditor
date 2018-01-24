@@ -55,7 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Colour.cs" />
+    <Compile Include="Engine\Colour.cs" />
+    <Compile Include="Engine\ColourHandler.cs" />
     <Compile Include="Controls\NumberPicker.xaml.cs">
       <DependentUpon>NumberPicker.xaml</DependentUpon>
     </Compile>
@@ -65,7 +66,7 @@
       <DependentUpon>NewSpriteDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Sprite.cs" />
+    <Compile Include="Engine\Sprite.cs" />
     <Compile Include="WindowCommands.cs" />
     <Compile Include="WindowDataContext.cs" />
     <Page Include="Controls\NumberPicker.xaml">
