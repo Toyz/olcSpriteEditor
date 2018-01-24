@@ -23,17 +23,17 @@ namespace SPE.Engine
             }
         }
 
-        public static Colour GetByHex(string hex)
+        public static Colour ByHex(string hex)
         {
             return SystemColours.FirstOrDefault(x => x.Hex.Equals(hex));
         }
 
-        public static Colour GetByRgb(int r, int g, int b)
+        public static Colour ByRgb(int r, int g, int b)
         {
             return SystemColours.FirstOrDefault(x => x.R == r && x.G == g && x.B == b);
         }
 
-        public static Colour GetByCode(short code)
+        public static Colour ByCode(short code)
         {
             return SystemColours.FirstOrDefault(x => x.Code == code);
         }

@@ -50,7 +50,7 @@ namespace SPE
 
         private void CreateColorPalletWindow()
         {
-            _activeColour = ColourHandler.GetByHex("000000");
+            _activeColour = ColourHandler.ByHex("000000");
 
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
@@ -137,7 +137,7 @@ namespace SPE
                     var j1 = i;
 
                     var c = LoadedSprite.GetColour(j, i);
-                    var correctColor = ColourHandler.GetByCode(c);
+                    var correctColor = ColourHandler.ByCode(c);
 
                     var rect = new Rectangle
                     {
@@ -266,7 +266,7 @@ namespace SPE
                     for (var j = 0; j < LoadedSprite.Height; j++)
                     {
                         var c = LoadedSprite.GetColour(i, j);
-                        var correctColor = ColourHandler.GetByCode(c);
+                        var correctColor = ColourHandler.ByCode(c);
 
                         flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), new RectangleF(i * Sprite.SpriteBlockSize, j * Sprite.SpriteBlockSize, Sprite.SpriteBlockSize, Sprite.SpriteBlockSize));
                     }
@@ -314,15 +314,12 @@ namespace SPE
                 AddExtension = true
             };
 
-            if (sfd.ShowDialog() == true)
-            {
-                var file = sfd.FileName;
+            if (sfd.ShowDialog() != true) return;
+            var file = sfd.FileName;
 
-                SaveToRecentsList(file);
-                LoadedSprite.Save(file);
-                WindowDataContext.CurrentProgramStatus = $"Saved: {Path.GetFileName(file)}";
-
-            }
+            SaveToRecentsList(file);
+            LoadedSprite.Save(file);
+            WindowDataContext.CurrentProgramStatus = $"Saved: {Path.GetFileName(file)}";
         }
 
         private void ToggleSpriteGrid()

@@ -31,7 +31,7 @@ namespace SPE.Engine
 
             Colours = new short[Width * Height];
 
-            var black = ColourHandler.GetByHex("000000");
+            var black = ColourHandler.ByHex("000000");
         
             for (var i = 0; i < Colours.Length; i++) Colours[i] = black.Code;
 
