@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace SPE.Engine
@@ -31,11 +32,13 @@ namespace SPE.Engine
 
             Colours = new short[Width * Height];
 
-            var black = ColourHandler.ByHex("000000");
+            var black = ColourHandler.ByHex("FF000000", Pixal.PIXEL_SOLID);
         
             for (var i = 0; i < Colours.Length; i++) Colours[i] = black.Code;
 
             Glyphs = new short[Width * Height];
+            for (var i = 0; i < Glyphs.Length; i++) Glyphs[i] = (int)Pixal.PIXEL_SOLID;
+
         }
 
         public short GetColour(int x, int y)
@@ -50,9 +53,9 @@ namespace SPE.Engine
             Colours[y * Width + x] = color.Code;
         }
 
-        public short GetGlyph(int x, int y)
+        public int GetGlyph(int x, int y)
         {
-            return x < 0 || x > Width || y < 0 || y > Height ? (short)0 : Glyphs[y * Width + x];
+            return x < 0 || x > Width || y < 0 || y > Height ? 0 : Glyphs[y * Width + x];
         }
 
         public void SetGlyph(int x, int y, Pixal glyph)
@@ -70,7 +73,7 @@ namespace SPE.Engine
         public void Save(string file)
         {
             File = file;
-            using (var writer = new BinaryWriter(System.IO.File.Open(file, FileMode.OpenOrCreate), Encoding.Unicode))
+            using (var writer = new BinaryWriter(System.IO.File.Open(file, FileMode.OpenOrCreate)))
             {
                 writer.Write(Width);
                 writer.Write(Height);
@@ -84,7 +87,7 @@ namespace SPE.Engine
                 {
                     for (var j = 0; j < Height; j++)
                     {
-                        var pixal = (short) ColourHandler.ByCode(Colours[i * Width + j]).PT;
+                        var pixal = (short) ColourHandler.ByCode(Colours[i * Width + j], (Pixal)Glyphs[i * Width + j]).PT;
                         writer.Write(pixal);
                     }
                 }
@@ -93,7 +96,7 @@ namespace SPE.Engine
 
         private void Load()
         {
-            using (var reader = new BinaryReader(System.IO.File.Open(File, FileMode.Open), Encoding.Unicode))
+            using (var reader = new BinaryReader(System.IO.File.Open(File, FileMode.Open)))
             {
                 Width = reader.ReadInt32();
                 Height = reader.ReadInt32();
@@ -104,7 +107,16 @@ namespace SPE.Engine
                 {
                     Colours[i] = reader.ReadInt16();
                 }
+
+                for (var i = 0; i < Width * Height; i++)
+                {
+                    var g = reader.ReadInt16();
+                    Glyphs[i] = g;
+                }
+   
             }
+
+            Console.WriteLine(this);
         }
 
         public override string ToString()

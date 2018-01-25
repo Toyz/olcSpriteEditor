@@ -36,5 +36,13 @@ namespace SPE
                 enc.Save(stm);
             }
         }
+
+        public static short BytesToShort(short byte1, short byte2)
+        {
+            short number = (short)byte2;
+            number <<= 4;
+            number += (short)byte1;
+            return number;
+        }
     }
 }

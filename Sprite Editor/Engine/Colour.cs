@@ -40,21 +40,23 @@ namespace SPE.Engine
         BG_WHITE = 0x00F0,
     };
 
-    public enum Pixal : short
+    public enum Pixal
     {
         PIXEL_SOLID = 0x2588,
         PIXEL_THREEQUARTERS = 0x2593,
         PIXEL_HALF = 0x2592,
-        PIXEL_QUARTER = 0x2591
+        PIXEL_QUARTER = 0x2591,
+        PIXEL_SPACE = 0x0020
     }
 
     public class Colour : IEquatable<Colour>
     {
-        public Colour(int r, int g, int b, Colours fg, Colours bg, Pixal type)
+        public Colour(int r, int g, int b, int a ,Colours fg, Colours bg, Pixal type)
         {
             R = r;
             G = g;
             B = b;
+            A = a;
             FG = fg;
             BG = bg;
             PT = type;
@@ -67,23 +69,26 @@ namespace SPE.Engine
             R = (int) (float.Parse(lineData[0].Trim()) * 255);
             G = (int) (float.Parse(lineData[1].Trim()) * 255);
             B = (int) (float.Parse(lineData[2].Trim()) * 255);
+            A = 255;
 
             FG = (Colours)Enum.Parse(typeof(Colours), lineData[3].Trim());
             BG = (Colours)Enum.Parse(typeof(Colours), lineData[4].Trim());
             PT = (Pixal)Enum.Parse(typeof(Pixal), lineData[5].Trim());
         }
 
+
         public int R { get; }
         public int G { get; }
         public int B { get; }
+        public int A { get; }
 
         public Colours FG { get; }
         public Colours BG { get; }
         public Pixal PT { get; }
 
-        public string Hex => $"{R:X2}{G:X2}{B:X2}";
-        public Color Color => Color.FromRgb((byte)R, (byte)G, (byte)B);
-        public short Code => (short)((byte)BG | (byte)FG);
+        public string Hex => $"{A:X2}{R:X2}{G:X2}{B:X2}";
+        public Color Color => Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
+        public short Code => (short) (A == 255 ? (short)((byte)BG | (byte)FG) : 0);
 
         public override bool Equals(object obj)
         {

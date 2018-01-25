@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -53,7 +54,7 @@ namespace SPE
 
         private void CreateColorPalletWindow()
         {
-            _activeColour = ColourHandler.ByHex("000000");
+            _activeColour = ColourHandler.ByHex("FF000000", Pixal.PIXEL_SOLID);
 
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
@@ -148,8 +149,13 @@ namespace SPE
                     var j1 = i;
 
                     var c = LoadedSprite.GetColour(j, i);
-                    var correctColor = ColourHandler.ByCode(c);
+                    var g = LoadedSprite.GetGlyph(j, i);
+                    Console.WriteLine(g);
+                    
+                    var correctColor = ColourHandler.ByCode(c, (Pixal)g);
 
+                    if(correctColor == null) continue;
+                    
                     var rect = new Rectangle
                     {
                         Width = Sprite.SpriteBlockSize,

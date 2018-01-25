@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -26,6 +27,13 @@ namespace SPE.Engine
                 // TODO: Fix Sorting by color
                 // Colours.Sort(SortColors2);
             }
+
+            Colours.Insert(0, new Colour(0, 0, 0, 150, Engine.Colours.BG_BLACK, Engine.Colours.BG_BLACK, Pixal.PIXEL_SPACE));
+        }
+
+        internal static Colour ByHex(string hex, Pixal pixal)
+        {
+            return Colours.FirstOrDefault(x => x.Hex.Equals(hex) && x.PT == pixal);
         }
 
         public static Colour ByHex(string hex)
@@ -41,6 +49,11 @@ namespace SPE.Engine
         public static Colour ByCode(short code)
         {
             return Colours.FirstOrDefault(x => x.Code == code);
+        }
+
+        public static Colour ByCode(short code, Pixal pixal)
+        {
+            return Colours.FirstOrDefault(x => x.Code == code && x.PT == pixal);
         }
 
         private static int SortColors(Colour a, Colour b) => a.Color.GetBrightness().CompareTo(b.Color.GetBrightness());
