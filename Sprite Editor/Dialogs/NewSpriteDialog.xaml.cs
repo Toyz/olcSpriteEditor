@@ -17,8 +17,6 @@ namespace SPE.Dialogs
             InitializeComponent();
 
             DataContext = mainWindow.WindowDataContext;
-            NumberPickerWidth.Maxvalue = 256;
-            NumberPickerHeight.Maxvalue = 256;
 
             NumberPickerHeight.Value = Properties.Settings.Default.Create_H;
             NumberPickerWidth.Value = Properties.Settings.Default.Create_W;

@@ -12,7 +12,9 @@ namespace SPE.Controls
     /// </summary>
     public partial class NumberPicker
     {
-        public int Minvalue = 1, Maxvalue = 100, Startvalue = 10;
+        public int Minvalue { get; set; } = 1;
+        public int Maxvalue { get; set; } = 100;
+        public int Startvalue { get; set; } = 10;
 
         private int _value;
         public int Value
