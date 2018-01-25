@@ -26,6 +26,7 @@ namespace SPE
 
         public readonly WindowDataContext WindowDataContext = new WindowDataContext();
 
+        private bool IsMouseDown = false;
         private Colour _activeColour;
         private readonly Brush _gridColorBrush = new SolidColorBrush(Colors.White);
         private readonly Brush _colorBorder = new SolidColorBrush(Colors.LightGray);
@@ -164,14 +165,11 @@ namespace SPE
 
                     rect.MouseEnter += (sender, args) =>
                     {
+                        if (IsMouseDown)
+                        {
+                            UpdateRect((Rectangle)sender, i1, j1);
+                        }
                         rect.Stroke = _hoverBrush;
-                    };
-
-                    rect.MouseDown += (sender, args) =>
-                    {
-                        rect.Fill = new SolidColorBrush(_activeColour.Color);
-                        LoadedSprite.SetColour(i1, j1, _activeColour);
-                        LoadedSprite.SetGlyph(i1, j1, _activeColour.PT);
                     };
 
                     rect.MouseLeave += (sender, args) =>
@@ -184,6 +182,23 @@ namespace SPE
                         rect.Stroke = null;
                     };
 
+                    rect.MouseUp += (sender, args) =>
+                    {
+                        if (args.LeftButton == MouseButtonState.Released)
+                        {
+                            IsMouseDown = false;
+                        }
+                    };
+
+                    rect.MouseDown += (sender, args) =>
+                    {
+                        if (args.LeftButton == MouseButtonState.Pressed)
+                        {
+                            IsMouseDown = true;
+                        }
+                        UpdateRect((Rectangle)sender, i1, j1);
+                    };
+
                     SpriteViewCanvas.Children.Add(rect);
                     Canvas.SetTop(rect, i * Sprite.SpriteBlockSize);
                     Canvas.SetLeft(rect, j * Sprite.SpriteBlockSize);
@@ -191,6 +206,13 @@ namespace SPE
             }
 
             SpriteViewCanvas.IsEnabled = true;
+        }
+
+        private void UpdateRect(Rectangle rect, int i1, int j1)
+        {
+            rect.Fill = new SolidColorBrush(_activeColour.Color);
+            LoadedSprite.SetColour(i1, j1, _activeColour);
+            LoadedSprite.SetGlyph(i1, j1, _activeColour.PT);
         }
 
         private void FileOptionClicked(object sender, ExecutedRoutedEventArgs e)
