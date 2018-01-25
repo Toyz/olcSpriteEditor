@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -11,6 +12,7 @@ using Microsoft.Win32;
 using SPE.Engine;
 using static SPE.Properties.Settings;
 using Brush = System.Windows.Media.Brush;
+using Color = System.Windows.Media.Color;
 using Rectangle = System.Windows.Shapes.Rectangle;
 
 namespace SPE
@@ -108,6 +110,14 @@ namespace SPE
 
                         }
                     };
+
+                    var tt = new ToolTip
+                    {
+                        Content = $"Hex: #{c.Hex}{Environment.NewLine}RGB: {c.R},{c.G},{c.B}",
+                        Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255))
+                    };
+
+                    rect.ToolTip = tt;
 
                     if (_activeColour != null && _activeColour.Hex == c.Hex)
                     {

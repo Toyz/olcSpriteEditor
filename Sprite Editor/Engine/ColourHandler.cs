@@ -20,6 +20,11 @@ namespace SPE.Engine
 
                     Colours.Add(new Colour(line));
                 }
+
+                Colours.Sort(SortColors);
+
+                // TODO: Fix Sorting by color
+                // Colours.Sort(SortColors2);
             }
         }
 
@@ -36,6 +41,26 @@ namespace SPE.Engine
         public static Colour ByCode(short code)
         {
             return Colours.FirstOrDefault(x => x.Code == code);
+        }
+
+        private static int SortColors(Colour a, Colour b) => a.Color.GetBrightness().CompareTo(b.Color.GetBrightness());
+
+        private static int SortColors2(Colour a, Colour b)
+        {
+            if (a.R < b.R)
+                return -1;
+            if (a.R > b.R)
+                return 1;
+            if (a.G < b.G)
+                return -1;
+            if (a.G > b.G)
+                return 1;
+            if (a.B < b.B)
+                return -1;
+            if (a.B > b.B)
+                return 1;
+
+            return 0;
         }
     }
 }
