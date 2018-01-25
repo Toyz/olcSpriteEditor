@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Text;
 
 namespace SPE.Engine
 {
@@ -12,7 +12,7 @@ namespace SPE.Engine
         public int Width { get; private set; }
         public int Height { get; private set; }
         public short[] Colours { get; private set; }
-        public char[] Glyphs { get; private set; }
+        public short[] Glyphs { get; private set; }
 
         public string File { get; private set; } = string.Empty;
 
@@ -35,7 +35,7 @@ namespace SPE.Engine
         
             for (var i = 0; i < Colours.Length; i++) Colours[i] = black.Code;
 
-            Glyphs = new char[Width * Height];
+            Glyphs = new short[Width * Height];
         }
 
         public short GetColour(int x, int y)
@@ -50,16 +50,16 @@ namespace SPE.Engine
             Colours[y * Width + x] = color.Code;
         }
 
-        public char GetGlyph(int x, int y)
+        public short GetGlyph(int x, int y)
         {
-            return x < 0 || x > Width || y < 0 || y > Height ? (char)0 : Glyphs[y * Width + x];
+            return x < 0 || x > Width || y < 0 || y > Height ? (short)0 : Glyphs[y * Width + x];
         }
 
         public void SetGlyph(int x, int y, Pixal glyph)
         {
             if (x < 0 || x > Width || y < 0 || y > Height)
                 return;
-            Glyphs[y * Width + x] = (char) glyph;
+            Glyphs[y * Width + x] = (short) glyph;
         }
 
         public void Save()
@@ -70,8 +70,7 @@ namespace SPE.Engine
         public void Save(string file)
         {
             File = file;
-
-            using (var writer = new BinaryWriter(System.IO.File.Open(file, FileMode.OpenOrCreate)))
+            using (var writer = new BinaryWriter(System.IO.File.Open(file, FileMode.OpenOrCreate), Encoding.Unicode))
             {
                 writer.Write(Width);
                 writer.Write(Height);
@@ -81,30 +80,29 @@ namespace SPE.Engine
                     writer.Write(Colours[i]);
                 }
 
-                for (var i = 0; i < Width * Height; i++)
+                for (var i = 0; i < Width; i++)
                 {
-                    writer.Write(Glyphs[i]);
+                    for (var j = 0; j < Height; j++)
+                    {
+                        var pixal = (short) ColourHandler.ByCode(Colours[i * Width + j]).PT;
+                        writer.Write(pixal);
+                    }
                 }
             }
         }
 
         private void Load()
         {
-            using (var reader = new BinaryReader(System.IO.File.Open(File, FileMode.Open)))
+            using (var reader = new BinaryReader(System.IO.File.Open(File, FileMode.Open), Encoding.Unicode))
             {
                 Width = reader.ReadInt32();
                 Height = reader.ReadInt32();
                 Colours = new short[Width * Height];
-                Glyphs = new char[Width * Height];
+                Glyphs = new short[Width * Height];
 
                 for (var i = 0; i < Width * Height; i++)
                 {
                     Colours[i] = reader.ReadInt16();
-                }
-
-                for (var i = 0; i < Width * Height; i++)
-                {
-                    Glyphs[i] = reader.ReadChar();
                 }
             }
         }
@@ -127,7 +125,7 @@ namespace SPE.Engine
                    Width == other.Width &&
                    Height == other.Height &&
                    EqualityComparer<short[]>.Default.Equals(Colours, other.Colours) &&
-                   EqualityComparer<char[]>.Default.Equals(Glyphs, other.Glyphs) &&
+                   EqualityComparer<short[]>.Default.Equals(Glyphs, other.Glyphs) &&
                    File == other.File;
         }
 
@@ -137,7 +135,7 @@ namespace SPE.Engine
             hashCode = hashCode * -1521134295 + Width.GetHashCode();
             hashCode = hashCode * -1521134295 + Height.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<short[]>.Default.GetHashCode(Colours);
-            hashCode = hashCode * -1521134295 + EqualityComparer<char[]>.Default.GetHashCode(Glyphs);
+            hashCode = hashCode * -1521134295 + EqualityComparer<short[]>.Default.GetHashCode(Glyphs);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(File);
             return hashCode;
         }
