@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.Windows;
 
 namespace SPE.Engine
 {
@@ -10,6 +9,7 @@ namespace SPE.Engine
     {
         public static int SpriteBlockSize { get; } = 32;
 
+        public bool FailedLoading { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
         public short[] Colours { get; private set; }
@@ -22,7 +22,7 @@ namespace SPE.Engine
         {
             File = file;
 
-            Load();
+             FailedLoading = Load();
         }
 
         public Sprite(int width, int height)
@@ -94,29 +94,40 @@ namespace SPE.Engine
             }
         }
 
-        private void Load()
+        private bool Load()
         {
-            using (var reader = new BinaryReader(System.IO.File.Open(File, FileMode.Open)))
+            try
             {
-                Width = reader.ReadInt32();
-                Height = reader.ReadInt32();
-                Colours = new short[Width * Height];
-                Glyphs = new short[Width * Height];
 
-                for (var i = 0; i < Width * Height; i++)
+                using (var reader = new BinaryReader(System.IO.File.Open(File, FileMode.Open)))
                 {
-                    Colours[i] = reader.ReadInt16();
-                }
 
-                for (var i = 0; i < Width * Height; i++)
-                {
-                    var g = reader.ReadInt16();
-                    Glyphs[i] = g;
+                    Width = reader.ReadInt32();
+                    Height = reader.ReadInt32();
+                    Colours = new short[Width * Height];
+                    Glyphs = new short[Width * Height];
+
+                    for (var i = 0; i < Width * Height; i++)
+                    {
+                        Colours[i] = reader.ReadInt16();
+                    }
+
+                    for (var i = 0; i < Width * Height; i++)
+                    {
+                        var g = reader.ReadInt16();
+                        Glyphs[i] = g;
+                    }
+
                 }
-   
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Corrupted sprite has been detected...", "Failed to load", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return true;
             }
 
-            Console.WriteLine(this);
+            return false;
         }
 
         public override string ToString()

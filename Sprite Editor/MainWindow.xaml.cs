@@ -249,10 +249,19 @@ namespace SPE
                     if (ofd.ShowDialog() == true)
                     {
                         LoadedSprite = new Sprite(ofd.FileName);
-                        SpriteViewCanvas.Children.Clear();
-                        SaveToRecentsList(ofd.FileName);
-                        WindowDataContext.CurrentProgramStatus = $"Loaded: {Path.GetFileName(ofd.FileName)}";
-                        UpdateCanvas();
+                        if (!LoadedSprite.FailedLoading)
+                        {
+                            SpriteViewCanvas.Children.Clear();
+                            SaveToRecentsList(ofd.FileName);
+                            WindowDataContext.CurrentProgramStatus = $"Loaded: {Path.GetFileName(ofd.FileName)}";
+                            UpdateCanvas();
+                        }
+                        else
+                        {
+                            LoadedSprite = new Sprite(10, 10);
+                            SpriteViewCanvas.Children.Clear();
+                            UpdateCanvas();
+                        }
                     }
 
                     break;
