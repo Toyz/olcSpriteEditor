@@ -148,9 +148,7 @@ namespace SPE
                     var j1 = i;
 
                     var c = LoadedSprite.GetColour(j, i);
-                    var g = LoadedSprite.GetGlyph(j, i);
-                    Console.WriteLine(g);
-                    
+                    var g = LoadedSprite.GetGlyph(j, i);                    
                     var correctColor = ColourHandler.ByCode(c, (Pixal)g);
 
                     if(correctColor == null) continue;
@@ -283,7 +281,6 @@ namespace SPE
 
             if (newSpriteDialog.ShowDialog() == true)
             {
-                // Dp thing with the data...
                 SpriteViewCanvas.Children.Clear();
                 UpdateCanvas();
             }
@@ -431,7 +428,16 @@ namespace SPE
                 }
 
                 LoadedSprite = new Sprite(file, this);
-                WindowDataContext.CurrentProgramStatus = $"Loaded: {Path.GetFileName(file)}";
+
+                if (LoadedSprite.FailedToLoad)
+                {
+                    RecentFilesList.Items.Remove(sender);
+                    LoadedSprite = new Sprite(10, 10, this);
+                }
+                else
+                {
+                    WindowDataContext.CurrentProgramStatus = $"Loaded: {Path.GetFileName(file)}";
+                }
 
                 SpriteViewCanvas.Children.Clear();
                 UpdateCanvas();
