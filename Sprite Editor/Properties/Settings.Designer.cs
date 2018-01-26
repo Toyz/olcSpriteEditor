@@ -69,5 +69,17 @@ namespace SPE.Properties {
                 this["Create_H"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowAllColours {
+            get {
+                return ((bool)(this["ShowAllColours"]));
+            }
+            set {
+                this["ShowAllColours"] = value;
+            }
+        }
     }
 }

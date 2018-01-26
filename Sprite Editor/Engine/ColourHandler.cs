@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -8,10 +9,11 @@ namespace SPE.Engine
     public static class ColourHandler
     {
         public static List<Colour> Colours { get; }
+        private static List<Colour> AllColours { get; }
 
         static ColourHandler()
         {
-            Colours = new List<Colour>();
+            Colours = AllColours = new List<Colour>();
 
             if (Colours.Count <= 0)
             {
@@ -19,7 +21,7 @@ namespace SPE.Engine
                 {
                     if (line.StartsWith("#") || string.IsNullOrEmpty(line)) continue;
 
-                    Colours.Add(new Colour(line));
+                    AllColours.Add(new Colour(line));
                 }
 
                 //Colours.Sort(SortColors);
@@ -29,9 +31,29 @@ namespace SPE.Engine
             }
 
             Colours.Insert(0, new Colour(0, 0, 0, 150, Engine.Colours.BG_BLACK, Engine.Colours.BG_BLACK, Pixal.PIXEL_SPACE));
+
+            Colours = new List<Colour>(AllColours);
         }
 
-        internal static Colour ByHex(string hex, Pixal pixal)
+        public static void SwapColours(bool all)
+        {
+            Colours.Clear();
+
+            if (all)
+            {
+                foreach (var c in AllColours)
+                {
+                    Colours.Add(c);
+                }
+            }
+            else
+            {
+                foreach(var c in AllColours.Take(17).ToList())
+                    Colours.Add(c);
+            }
+        }
+
+        public static Colour ByHex(string hex, Pixal pixal)
         {
             return Colours.FirstOrDefault(x => x.Hex.Equals(hex) && x.PT == pixal);
         }

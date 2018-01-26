@@ -34,5 +34,9 @@ namespace SPE
         {
             new KeyGesture(Key.G, ModifierKeys.Control | ModifierKeys.Alt)
         }));
+
+        public static readonly RoutedCommand ShowAllColours = new RoutedUICommand("Show All Colours", "ShowAllColours", typeof(MenuItem), null);
+
+        public static readonly RoutedCommand ShowSystemColours = new RoutedUICommand("Show System Colours", "ShowSystemColours", typeof(MenuItem), null);
     }
 }

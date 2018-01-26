@@ -14,6 +14,8 @@
         <CommandBinding Command="{x:Static local:WindowCommands.ExportCommand}" Executed="FileOptionClicked"/>
         <CommandBinding Command="{x:Static local:WindowCommands.ExportCommand}" Executed="FileOptionClicked"/>
         <CommandBinding Command="{x:Static local:WindowCommands.NewCommand}" Executed="FileOptionClicked"/>
+        <CommandBinding Command="{x:Static local:WindowCommands.ShowSystemColours}" Executed="FileOptionClicked"/>
+        <CommandBinding Command="{x:Static local:WindowCommands.ShowAllColours}" Executed="FileOptionClicked"/>
     </Window.CommandBindings>
     <Grid>
         <DockPanel>
@@ -32,6 +34,11 @@
                 </MenuItem>
 
                 <MenuItem Header="Tools">
+                    <MenuItem Header="Current Color Mode">
+                        <MenuItem IsCheckable="True" Name="ModeAllColours" Command="{x:Static local:WindowCommands.ShowAllColours}"/>
+                        <MenuItem IsCheckable="True" Name="ModeSystemColours" Command="{x:Static local:WindowCommands.ShowSystemColours}"/>
+                    </MenuItem>
+                    <Separator />
                     <MenuItem Name="ToggleCanvasGrid" IsCheckable="True" IsChecked="False" Command="{x:Static local:WindowCommands.ToggleGridCommand}"/>
                 </MenuItem>
             </Menu>

@@ -35,6 +35,7 @@ namespace SPE
         private readonly Brush _hoverBrush = new SolidColorBrush(Colors.Brown);
         private readonly Brush _activeColor = new SolidColorBrush(Colors.Red);
 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -45,12 +46,24 @@ namespace SPE
 
             ToggleCanvasGrid.IsChecked = Default.UseGridOnCanvas;
 
-            CreateColorPalletWindow();
            
             LoadedSprite = new Sprite(10, 10, this);
             UpdateCanvas();
 
             WindowDataContext.CurrentProgramStatus = "Loaded Empty Sprite";
+
+            if (Default.ShowAllColours)
+            {
+                ModeAllColours.IsChecked = true;
+                ColourHandler.SwapColours(true);
+            }
+            else
+            {
+                ModeSystemColours.IsChecked = true;
+                ColourHandler.SwapColours(false);
+            }
+
+            CreateColorPalletWindow();
         }
 
         private void CreateColorPalletWindow()
@@ -60,7 +73,8 @@ namespace SPE
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
             var width = (int)(ColorViewCanvas.Width / Sprite.SpriteBlockSize);
-            var height = ColourHandler.Colours.Count / width;
+            var height = (int)Math.Ceiling((decimal)ColourHandler.Colours.Count / width);
+            Console.WriteLine(height);
             ColorViewCanvas.Height = height * Sprite.SpriteBlockSize;
 
             var colorIdx = 0;
@@ -68,6 +82,11 @@ namespace SPE
             {
                 for (var i = 0; i < width; i++)
                 {
+                    if (colorIdx == ColourHandler.Colours.Count)
+                    {
+                        break;
+                    }
+
                     var c = ColourHandler.Colours[colorIdx];
 
                     var rect = new Rectangle
@@ -116,7 +135,7 @@ namespace SPE
 
                     var tt = new ToolTip
                     {
-                        Content = $"Hex: #{c.Hex}{Environment.NewLine}RGB: {c.R},{c.G},{c.B}{(c.A < 255 ? $"{Environment.NewLine}Transparent" : "")}",
+                        Content = $"Hex: #{c.Hex}{Environment.NewLine}RGB: {c.R},{c.G},{c.B}{(c.A < 255 ? $"{Environment.NewLine}Transparent" : "")}{Environment.NewLine}IDX: {colorIdx}",
                         Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255))
                     };
 
@@ -130,6 +149,7 @@ namespace SPE
                     ColorViewCanvas.Children.Add(rect);
                     Canvas.SetLeft(rect, i * Sprite.SpriteBlockSize);
                     Canvas.SetTop(rect, j * Sprite.SpriteBlockSize);
+
 
                     colorIdx++;
                 }
@@ -170,14 +190,15 @@ namespace SPE
 
                     rect.MouseEnter += (sender, args) =>
                     {
-                        if (_isLeftClickHeldDown)
-                        {
-                            UpdateRect((Rectangle)sender, i1, j1);
-                        }
-
+                        var ca = _activeColour;
                         if (_isRightClickHeldDown)
                         {
-                            UpdateRect((Rectangle)sender, i1, j1, ColourHandler.Colours[0]);
+                            ca = ColourHandler.Colours[0];
+                        }
+
+                        if (_isLeftClickHeldDown || _isRightClickHeldDown)
+                        {
+                            UpdateRect((Rectangle)sender, i1, j1, ca);
                         }
                         rect.Stroke = _hoverBrush;
                     };
@@ -301,6 +322,28 @@ namespace SPE
                     break;
                 case "NewSprite":
                     CreateNewSprite();
+                    break;
+                case "ShowSystemColours":
+                    Default.ShowAllColours = false;
+                    Default.Save();
+
+                    ModeAllColours.IsChecked = false;
+                    ModeSystemColours.IsChecked = true;
+
+                    ColourHandler.SwapColours(Default.ShowAllColours);
+                    ColorViewCanvas.Children.Clear();
+                    CreateColorPalletWindow();
+                    break;
+                case "ShowAllColours":
+                    Default.ShowAllColours = true;
+                    Default.Save();
+
+                    ModeAllColours.IsChecked = true;
+                    ModeSystemColours.IsChecked = false;
+
+                    ColourHandler.SwapColours(Default.ShowAllColours);
+                    ColorViewCanvas.Children.Clear();
+                    CreateColorPalletWindow();
                     break;
             }
         }
