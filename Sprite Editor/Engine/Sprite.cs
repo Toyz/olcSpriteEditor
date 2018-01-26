@@ -7,28 +7,35 @@ namespace SPE.Engine
 {
     public class Sprite : IEquatable<Sprite>
     {
+        private readonly MainWindow _mainWindow;
         public static int SpriteBlockSize { get; } = 32;
 
-        public bool FailedLoading { get; private set; }
+        public bool FailedToLoad { get; }
         public int Width { get; private set; }
         public int Height { get; private set; }
         public short[] Colours { get; private set; }
         public short[] Glyphs { get; private set; }
 
         public string File { get; private set; } = string.Empty;
+        private readonly System.Windows.Threading.DispatcherTimer _dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 
         // Load Sprite from file
-        public Sprite(string file)
+        public Sprite(string file, MainWindow mainWindow)
         {
+            _mainWindow = mainWindow;
             File = file;
 
-             FailedLoading = Load();
+            FailedToLoad = Load();
+
+            StartAutoSaving();
         }
 
-        public Sprite(int width, int height)
+        public Sprite(int width, int height, MainWindow mainWindow)
         {
+            _mainWindow = mainWindow;
             Width = width;
             Height = height;
+            FailedToLoad = false;
 
             Colours = new short[Width * Height];
 
@@ -39,6 +46,27 @@ namespace SPE.Engine
             Glyphs = new short[Width * Height];
             for (var i = 0; i < Glyphs.Length; i++) Glyphs[i] = (int)Pixal.PIXEL_SOLID;
 
+            StartAutoSaving();
+        }
+
+        ~Sprite()
+        {
+            _dispatcherTimer.Stop();
+        }
+
+        private void StartAutoSaving()
+        {
+            _dispatcherTimer.Tick += DispatcherTimer_Tick;
+            _dispatcherTimer.Interval = TimeSpan.FromSeconds(30);
+            _dispatcherTimer.Start();
+        }
+
+        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(File)) return;
+            if (!System.IO.File.Exists(File) || FailedToLoad) return;
+            Save();
+            _mainWindow.WindowDataContext.CurrentProgramStatus = $"Auto Saved Project - {DateTime.Now:h:mm:ss tt}";
         }
 
         public short GetColour(int x, int y)

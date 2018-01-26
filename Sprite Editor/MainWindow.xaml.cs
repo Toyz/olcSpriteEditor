@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,13 +20,13 @@ namespace SPE
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public Sprite LoadedSprite { get; set; }
 
         public readonly WindowDataContext WindowDataContext = new WindowDataContext();
 
-        private bool IsMouseDown = false;
+        private bool _isLeftClickDown;
         private Colour _activeColour;
         private readonly Brush _gridColorBrush = new SolidColorBrush(Colors.White);
         private readonly Brush _colorBorder = new SolidColorBrush(Colors.LightGray);
@@ -46,7 +45,7 @@ namespace SPE
 
             CreateColorPalletWindow();
            
-            LoadedSprite = new Sprite(10, 10);
+            LoadedSprite = new Sprite(10, 10, this);
             UpdateCanvas();
 
             WindowDataContext.CurrentProgramStatus = "Loaded Empty Sprite";
@@ -115,7 +114,7 @@ namespace SPE
 
                     var tt = new ToolTip
                     {
-                        Content = $"Hex: #{c.Hex}{Environment.NewLine}RGB: {c.R},{c.G},{c.B}",
+                        Content = $"Hex: #{c.Hex}{Environment.NewLine}RGB: {c.R},{c.G},{c.B}{(c.A < 255 ? $"{Environment.NewLine}Transparent" : "")}",
                         Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255))
                     };
 
@@ -171,7 +170,7 @@ namespace SPE
 
                     rect.MouseEnter += (sender, args) =>
                     {
-                        if (IsMouseDown)
+                        if (_isLeftClickDown)
                         {
                             UpdateRect((Rectangle)sender, i1, j1);
                         }
@@ -192,7 +191,7 @@ namespace SPE
                     {
                         if (args.LeftButton == MouseButtonState.Released)
                         {
-                            IsMouseDown = false;
+                            _isLeftClickDown = false;
                         }
                     };
 
@@ -200,7 +199,7 @@ namespace SPE
                     {
                         if (args.LeftButton == MouseButtonState.Pressed)
                         {
-                            IsMouseDown = true;
+                            _isLeftClickDown = true;
                         }
                         UpdateRect((Rectangle)sender, i1, j1);
                     };
@@ -248,8 +247,8 @@ namespace SPE
 
                     if (ofd.ShowDialog() == true)
                     {
-                        LoadedSprite = new Sprite(ofd.FileName);
-                        if (!LoadedSprite.FailedLoading)
+                        LoadedSprite = new Sprite(ofd.FileName, this);
+                        if (!LoadedSprite.FailedToLoad)
                         {
                             SpriteViewCanvas.Children.Clear();
                             SaveToRecentsList(ofd.FileName);
@@ -258,7 +257,7 @@ namespace SPE
                         }
                         else
                         {
-                            LoadedSprite = new Sprite(10, 10);
+                            LoadedSprite = new Sprite(10, 10, this);
                             SpriteViewCanvas.Children.Clear();
                             UpdateCanvas();
                         }
@@ -431,7 +430,7 @@ namespace SPE
                     return;
                 }
 
-                LoadedSprite = new Sprite(file);
+                LoadedSprite = new Sprite(file, this);
                 WindowDataContext.CurrentProgramStatus = $"Loaded: {Path.GetFileName(file)}";
 
                 SpriteViewCanvas.Children.Clear();
