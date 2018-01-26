@@ -18,6 +18,18 @@ namespace SPE
             }
         }
 
+        private string _currentSystemTool;
+
+        public string CurrentSystemTool
+        {
+            get => _currentSystemTool;
+            set
+            {
+                _currentSystemTool = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

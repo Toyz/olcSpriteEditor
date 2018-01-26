@@ -26,7 +26,9 @@ namespace SPE
 
         public readonly WindowDataContext WindowDataContext = new WindowDataContext();
 
-        private bool _isLeftClickDown;
+        private bool _isLeftClickHeldDown;
+        private bool _isRightClickHeldDown;
+
         private Colour _activeColour;
         private readonly Brush _gridColorBrush = new SolidColorBrush(Colors.White);
         private readonly Brush _colorBorder = new SolidColorBrush(Colors.LightGray);
@@ -168,9 +170,14 @@ namespace SPE
 
                     rect.MouseEnter += (sender, args) =>
                     {
-                        if (_isLeftClickDown)
+                        if (_isLeftClickHeldDown)
                         {
                             UpdateRect((Rectangle)sender, i1, j1);
+                        }
+
+                        if (_isRightClickHeldDown)
+                        {
+                            UpdateRect((Rectangle)sender, i1, j1, ColourHandler.Colours[0]);
                         }
                         rect.Stroke = _hoverBrush;
                     };
@@ -189,17 +196,36 @@ namespace SPE
                     {
                         if (args.LeftButton == MouseButtonState.Released)
                         {
-                            _isLeftClickDown = false;
+                            _isLeftClickHeldDown = false;
+                            WindowDataContext.CurrentSystemTool = "";
+                        }
+
+                        if (args.RightButton == MouseButtonState.Released)
+                        {
+                            _isRightClickHeldDown = false;
+                            WindowDataContext.CurrentSystemTool = "";
                         }
                     };
 
                     rect.MouseDown += (sender, args) =>
                     {
+                        var ca = _activeColour;
                         if (args.LeftButton == MouseButtonState.Pressed)
                         {
-                            _isLeftClickDown = true;
+                            _isRightClickHeldDown = false;
+                            _isLeftClickHeldDown = true;
+                            WindowDataContext.CurrentSystemTool = "Dragging Mode";
+
                         }
-                        UpdateRect((Rectangle)sender, i1, j1);
+                        else if (args.RightButton == MouseButtonState.Pressed)
+                        {
+                            _isLeftClickHeldDown = false;
+                            _isRightClickHeldDown = true;
+                            WindowDataContext.CurrentSystemTool = "Erasing Mode";
+                            ca = ColourHandler.Colours[0];
+                        }
+                        
+                        UpdateRect((Rectangle)sender, i1, j1, ca);
                     };
 
                     SpriteViewCanvas.Children.Add(rect);
@@ -211,11 +237,15 @@ namespace SPE
             SpriteViewCanvas.IsEnabled = true;
         }
 
-        private void UpdateRect(Rectangle rect, int i1, int j1)
+        private void UpdateRect(Rectangle rect, int i1, int j1, Colour c = null)
         {
-            rect.Fill = new SolidColorBrush(_activeColour.Color);
-            LoadedSprite.SetColour(i1, j1, _activeColour);
-            LoadedSprite.SetGlyph(i1, j1, _activeColour.PT);
+            if (c == null)
+            {
+                c = _activeColour;
+            }
+            rect.Fill = new SolidColorBrush(c.Color);
+            LoadedSprite.SetColour(i1, j1, c);
+            LoadedSprite.SetGlyph(i1, j1, c.PT);
         }
 
         private void FileOptionClicked(object sender, ExecutedRoutedEventArgs e)

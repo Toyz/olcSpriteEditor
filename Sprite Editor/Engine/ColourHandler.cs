@@ -22,7 +22,7 @@ namespace SPE.Engine
                     Colours.Add(new Colour(line));
                 }
 
-                Colours.Sort(SortColors);
+                //Colours.Sort(SortColors);
 
                 // TODO: Fix Sorting by color
                 // Colours.Sort(SortColors2);

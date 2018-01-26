@@ -39,6 +39,9 @@
                 <StatusBarItem>
                     <TextBlock Text="{Binding Path=CurrentProgramStatus}" />
                 </StatusBarItem>
+                <StatusBarItem HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding Path=CurrentSystemTool}" />
+                </StatusBarItem>
             </StatusBar>
             <Grid>
                 <ScrollViewer Focusable="False" Name="SpriteScrollViewer" Margin="0,0,250,0" VerticalScrollBarVisibility="Auto"  HorizontalScrollBarVisibility="Auto">
