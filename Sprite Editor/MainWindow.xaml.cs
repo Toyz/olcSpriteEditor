@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -135,7 +136,11 @@ namespace SPE
 
                     var tt = new ToolTip
                     {
-                        Content = $"Hex: #{c.Hex}{Environment.NewLine}RGB: {c.R},{c.G},{c.B}{(c.A < 255 ? $"{Environment.NewLine}Transparent" : "")}{Environment.NewLine}IDX: {colorIdx}",
+                        Content = $"Hex: #{c.Hex}{Environment.NewLine}" +
+                                  $"RGB: {c.R},{c.G},{c.B}" +
+                                  $"{(c.A < 255 ? $"{Environment.NewLine}Transparent" : "")}{Environment.NewLine}" +
+                                  $"IDX: {colorIdx}{Environment.NewLine}" +
+                                  $"Pixal: {(char)c.PT}",
                         Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255))
                     };
 
@@ -248,6 +253,13 @@ namespace SPE
                         
                         UpdateRect((Rectangle)sender, i1, j1, ca);
                     };
+
+                    var tt = new ToolTip
+                    {
+                        Content = $"{(j + 1)}, {(i + 1)}"
+                    };
+
+                    rect.ToolTip = tt;
 
                     SpriteViewCanvas.Children.Add(rect);
                     Canvas.SetTop(rect, i * Sprite.SpriteBlockSize);
