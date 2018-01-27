@@ -195,6 +195,7 @@ namespace SPE
 
                     rect.MouseEnter += (sender, args) =>
                     {
+                        var rr = (Rectangle) sender;
                         var ca = _activeColour;
                         if (_isRightClickHeldDown)
                         {
@@ -203,18 +204,28 @@ namespace SPE
 
                         if (_isLeftClickHeldDown || _isRightClickHeldDown)
                         {
-                            UpdateRect((Rectangle)sender, i1, j1, ca);
+                            UpdateRect(rr, i1, j1, ca);
                         }
+
+                        Colour rectColour = GetColourFromRect(rr);
+                        var rrT = (ToolTip) rr.ToolTip;
+                        rrT.Content += $"{Environment.NewLine}Hex: #{rectColour.Hex}" +
+                                       $"{Environment.NewLine}Pixal: {(char)rectColour.PT}";
                         rect.Stroke = _hoverBrush;
                     };
 
                     rect.MouseLeave += (sender, args) =>
                     {
+                        var rr = (Rectangle)sender;
+                        var rrT = (ToolTip)rr.ToolTip;
+                        rrT.Content = $"Pos: {(j1 + 1)}, {(i1 + 1)}";
+
                         if (Default.UseGridOnCanvas)
                         {
                             rect.Stroke = _gridColorBrush;
                             return;
                         }
+
                         rect.Stroke = null;
                     };
 
@@ -268,6 +279,13 @@ namespace SPE
             }
 
             SpriteViewCanvas.IsEnabled = true;
+        }
+
+        private Colour GetColourFromRect(Rectangle rr)
+        {
+            var s = (SolidColorBrush) rr.Fill;
+            return ColourHandler.ByRgb(s.Color.R, s.Color.B, s.Color.G, s.Color.A);
+
         }
 
         private void UpdateRect(Rectangle rect, int i1, int j1, Colour c = null)

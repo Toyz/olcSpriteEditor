@@ -68,6 +68,11 @@ namespace SPE.Engine
             return Colours.FirstOrDefault(x => x.R == r && x.G == g && x.B == b);
         }
 
+        public static Colour ByRgb(int r, int b, int g, int a)
+        {
+            return Colours.FirstOrDefault(x => x.R == r && x.G == g && x.B == b && x.A == a);
+        }
+
         public static Colour ByCode(short code)
         {
             return Colours.FirstOrDefault(x => x.Code == code);
