@@ -44,7 +44,7 @@ namespace SPE
 
             LoadRecentsFilesList();
 
-            ToggleCanvasGrid.IsChecked = Default.UseGridOnCanvas;
+            WindowDataContext.ToggleCanvasGrid = Default.UseGridOnCanvas;
 
            
             LoadedSprite = new Sprite(10, 10, this);
@@ -54,12 +54,12 @@ namespace SPE
 
             if (Default.ShowAllColours)
             {
-                ModeAllColours.IsChecked = true;
+                WindowDataContext.ModeAllColours = true;
                 ColourHandler.SwapColours(true);
             }
             else
             {
-                ModeSystemColours.IsChecked = true;
+                WindowDataContext.ModeSystemColours = true;
                 ColourHandler.SwapColours(false);
             }
 
@@ -327,8 +327,8 @@ namespace SPE
                     Default.ShowAllColours = false;
                     Default.Save();
 
-                    ModeAllColours.IsChecked = false;
-                    ModeSystemColours.IsChecked = true;
+                    WindowDataContext.ModeAllColours = false;
+                    WindowDataContext.ModeSystemColours = true;
 
                     ColourHandler.SwapColours(Default.ShowAllColours);
                     ColorViewCanvas.Children.Clear();
@@ -338,8 +338,8 @@ namespace SPE
                     Default.ShowAllColours = true;
                     Default.Save();
 
-                    ModeAllColours.IsChecked = true;
-                    ModeSystemColours.IsChecked = false;
+                    WindowDataContext.ModeAllColours = true;
+                    WindowDataContext.ModeSystemColours = false;
 
                     ColourHandler.SwapColours(Default.ShowAllColours);
                     ColorViewCanvas.Children.Clear();
@@ -440,8 +440,8 @@ namespace SPE
 
         private void ToggleSpriteGrid()
         {
-            ToggleCanvasGrid.IsChecked = !Default.UseGridOnCanvas;
-            Default.UseGridOnCanvas = ToggleCanvasGrid.IsChecked;
+            WindowDataContext.ToggleCanvasGrid = !Default.UseGridOnCanvas;
+            Default.UseGridOnCanvas = WindowDataContext.ToggleCanvasGrid;
 
             if (Default.UseGridOnCanvas)
             {

@@ -35,11 +35,11 @@
 
                 <MenuItem Header="Tools">
                     <MenuItem Header="Current Color Mode">
-                        <MenuItem IsCheckable="True" Name="ModeAllColours" Command="{x:Static local:WindowCommands.ShowAllColours}"/>
-                        <MenuItem IsCheckable="True" Name="ModeSystemColours" Command="{x:Static local:WindowCommands.ShowSystemColours}"/>
+                        <MenuItem IsCheckable="True" IsChecked="{Binding Path=ModeAllColours}" Command="{x:Static local:WindowCommands.ShowAllColours}"/>
+                        <MenuItem IsCheckable="True" IsChecked="{Binding Path=ModeSystemColours}" Command="{x:Static local:WindowCommands.ShowSystemColours}"/>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Name="ToggleCanvasGrid" IsCheckable="True" IsChecked="False" Command="{x:Static local:WindowCommands.ToggleGridCommand}"/>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding Path=ToggleCanvasGrid}" Command="{x:Static local:WindowCommands.ToggleGridCommand}"/>
                 </MenuItem>
             </Menu>
             <StatusBar DockPanel.Dock="Bottom">
@@ -55,8 +55,10 @@
                     <Canvas RenderOptions.EdgeMode="Aliased"  Name="SpriteViewCanvas"  />
                 </ScrollViewer>
 
-                <ScrollViewer  Focusable="False"  Name="ColorScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Right" Width="241" Height="275" VerticalAlignment="Top" Margin="0,25,4,0">
-                      <Canvas RenderOptions.EdgeMode="Aliased" Name="ColorViewCanvas"  />
+                <ScrollViewer  Focusable="False"  Name="ColorScrollViewer" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Right" Width="241" Height="275" VerticalAlignment="Top" Margin="0,25,4,0">
+                    <Grid>
+                        <Canvas RenderOptions.EdgeMode="Aliased" Name="ColorViewCanvas" Height="1" VerticalAlignment="Top" />
+                    </Grid>  
                 </ScrollViewer>
                 <Label Content="Color Picker" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Right" Width="245"/>
             </Grid>
