@@ -124,7 +124,6 @@ namespace SPE.Engine
         {
             try
             {
-
                 using (var reader = new BinaryReader(System.IO.File.Open(File, FileMode.Open)))
                 {
 

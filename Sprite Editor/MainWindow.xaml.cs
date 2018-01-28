@@ -167,15 +167,15 @@ namespace SPE
             SpriteViewCanvas.Width = LoadedSprite.Width * Sprite.SpriteBlockSize;
             SpriteViewCanvas.Height = LoadedSprite.Height * Sprite.SpriteBlockSize;
 
-            for (var i = 0; i < LoadedSprite.Height; i++)
+            for (var column = 0; column < LoadedSprite.Height; column++)
             {
-                for (var j = 0; j < LoadedSprite.Width; j++)
+                for (var row = 0; row < LoadedSprite.Width; row++)
                 {
-                    var i1 = j;
-                    var j1 = i;
+                    var row1 = row;
+                    var column1 = column;
 
-                    var c = LoadedSprite.GetColour(j, i);
-                    var g = LoadedSprite.GetGlyph(j, i);                    
+                    var c = LoadedSprite.GetColour(row, column);
+                    var g = LoadedSprite.GetGlyph(row, column);                    
                     var correctColor = ColourHandler.ByCode(c, (Pixal)g);
 
                     if(correctColor == null) continue;
@@ -204,7 +204,7 @@ namespace SPE
 
                         if (_isLeftClickHeldDown || _isRightClickHeldDown)
                         {
-                            UpdateRect(rr, i1, j1, ca);
+                            UpdateRect(rr, row1, column1, ca);
                         }
 
                         Colour rectColour = GetColourFromRect(rr);
@@ -262,20 +262,20 @@ namespace SPE
                             ca = ColourHandler.Colours[0];
                         }
                         
-                        UpdateRect((Rectangle)sender, i1, j1, ca);
+                        UpdateRect((Rectangle)sender, row1, column1, ca);
                     };
 
                     var tt = new ToolTip
                     {
-                        Content = $"{(j + 1)}, {(i + 1)}"
+                        Content = $"{(column + 1)}, {(row + 1)}"
                     };
 
                     rect.ToolTip = tt;
-                    rect.Tag = $"{(j1 + 1)}, {(i1 + 1)}";
+                    rect.Tag = $"{(column + 1)}, {(row + 1)}";
 
                     SpriteViewCanvas.Children.Add(rect);
-                    Canvas.SetTop(rect, i * Sprite.SpriteBlockSize);
-                    Canvas.SetLeft(rect, j * Sprite.SpriteBlockSize);
+                    Canvas.SetTop(rect, column * Sprite.SpriteBlockSize);
+                    Canvas.SetLeft(rect, row * Sprite.SpriteBlockSize);
                 }
             }
 
