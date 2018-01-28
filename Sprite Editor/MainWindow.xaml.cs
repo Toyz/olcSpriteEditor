@@ -218,7 +218,7 @@ namespace SPE
                     {
                         var rr = (Rectangle)sender;
                         var rrT = (ToolTip)rr.ToolTip;
-                        rrT.Content = $"Pos: {(j1 + 1)}, {(i1 + 1)}";
+                        rrT.Content = $"Pos: {rr.Tag}";
 
                         if (Default.UseGridOnCanvas)
                         {
@@ -271,6 +271,7 @@ namespace SPE
                     };
 
                     rect.ToolTip = tt;
+                    rect.Tag = $"{(j1 + 1)}, {(i1 + 1)}";
 
                     SpriteViewCanvas.Children.Add(rect);
                     Canvas.SetTop(rect, i * Sprite.SpriteBlockSize);

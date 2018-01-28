@@ -111,14 +111,12 @@ namespace SPE.Engine
                     writer.Write(Colours[i]);
                 }
 
-                for (var i = 0; i < Width; i++)
+                for (var i = 0; i < Width * Height; i++)
                 {
-                    for (var j = 0; j < Height; j++)
-                    {
-                        var pixal = (short) ColourHandler.ByCode(Colours[i * Width + j], (Pixal)Glyphs[i * Width + j]).PT;
-                        writer.Write(pixal);
-                    }
+                    var pixal = (short)ColourHandler.ByCode(Colours[i], (Pixal)Glyphs[i]).PT;
+                    writer.Write(pixal);
                 }
+
             }
         }
 
