@@ -208,8 +208,11 @@ namespace SPE
                         }
 
                         Colour rectColour = GetColourFromRect(rr);
+                        rr.ToolTip = new ToolTip();
+
                         var rrT = (ToolTip) rr.ToolTip;
-                        rrT.Content += $"{Environment.NewLine}Hex: #{rectColour.Hex}" +
+                        rrT.Content += $"POS: {rr.Tag}" +
+                                       $"{Environment.NewLine}Hex: #{rectColour.Hex}" +
                                        $"{Environment.NewLine}Pixal: {(char)rectColour.PT}";
                         rect.Stroke = _hoverBrush;
                     };
@@ -217,8 +220,7 @@ namespace SPE
                     rect.MouseLeave += (sender, args) =>
                     {
                         var rr = (Rectangle)sender;
-                        var rrT = (ToolTip)rr.ToolTip;
-                        rrT.Content = $"Pos: {rr.Tag}";
+                        rr.ToolTip = null;
 
                         if (Default.UseGridOnCanvas)
                         {
@@ -265,12 +267,6 @@ namespace SPE
                         UpdateRect((Rectangle)sender, row1, column1, ca);
                     };
 
-                    var tt = new ToolTip
-                    {
-                        Content = $"{(column + 1)}, {(row + 1)}"
-                    };
-
-                    rect.ToolTip = tt;
                     rect.Tag = $"{(column + 1)}, {(row + 1)}";
 
                     SpriteViewCanvas.Children.Add(rect);
