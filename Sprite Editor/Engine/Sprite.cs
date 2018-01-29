@@ -145,7 +145,7 @@ namespace SPE.Engine
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("Corrupted sprite has been detected...", "Failed to load", MessageBoxButton.OK,
                     MessageBoxImage.Error);

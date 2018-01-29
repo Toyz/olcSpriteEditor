@@ -7,7 +7,7 @@ namespace SPE.Dialogs
     /// <summary>
     /// Interaction logic for NewSpriteDialog.xaml
     /// </summary>
-    public partial class NewSpriteDialog : Window
+    public partial class NewSpriteDialog
     {
         private readonly MainWindow _mainWindow;
 
