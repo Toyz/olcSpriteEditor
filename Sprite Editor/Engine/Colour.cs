@@ -50,17 +50,22 @@ namespace SPE.Engine
         PIXEL_SPACE = 0x0020
     }
 
+    [Serializable]
     public class Colour : IEquatable<Colour>
     {
-        public Colour(int r, int g, int b, int a ,Colours fg, Colours bg, Pixal type)
+        public Colour()
+        {
+        }
+
+        public Colour(int r, int g, int b, int a ,Colours foreground, Colours background, Pixal type)
         {
             R = r;
             G = g;
             B = b;
             A = a;
-            FG = fg;
-            BG = bg;
-            PT = type;
+            Foreground = foreground;
+            Background = background;
+            Pixal = type;
         }
 
         public Colour(string line)
@@ -72,24 +77,23 @@ namespace SPE.Engine
             B = (int) (float.Parse(lineData[2].Trim()) * 255);
             A = 255;
 
-            FG = (Colours)Enum.Parse(typeof(Colours), lineData[3].Trim());
-            BG = (Colours)Enum.Parse(typeof(Colours), lineData[4].Trim());
-            PT = (Pixal)Enum.Parse(typeof(Pixal), lineData[5].Trim());
+            Foreground = (Colours)Enum.Parse(typeof(Colours), lineData[3].Trim());
+            Background = (Colours)Enum.Parse(typeof(Colours), lineData[4].Trim());
+            Pixal = (Pixal)Enum.Parse(typeof(Pixal), lineData[5].Trim());
         }
 
+        public int R { get; set; }
+        public int G { get; set; }
+        public int B { get; set; }
+        public int A { get; set; }
 
-        public int R { get; }
-        public int G { get; }
-        public int B { get; }
-        public int A { get; }
-
-        public Colours FG { get; }
-        public Colours BG { get; }
-        public Pixal PT { get; }
+        public Colours Foreground { get; set; }
+        public Colours Background { get; set; }
+        public Pixal Pixal { get; set; }
 
         public string Hex => $"{A:X2}{R:X2}{G:X2}{B:X2}";
         public Color Color => Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
-        public short Code => (short) (A == 255 ? (short)((byte)BG | (byte)FG) : 0);
+        public short Code => (short) (A == 255 ? (short)((byte)Background | (byte)Foreground) : 0);
         public virtual Brush Brush => new SolidColorBrush(Color);
 
         public override bool Equals(object obj)
@@ -103,9 +107,9 @@ namespace SPE.Engine
                    R == other.R &&
                    G == other.G &&
                    B == other.B &&
-                   FG == other.FG &&
-                   BG == other.BG &&
-                   PT == other.PT &&
+                   Foreground == other.Foreground &&
+                   Background == other.Background &&
+                   Pixal == other.Pixal &&
                    Hex == other.Hex &&
                    Color.Equals(other.Color) &&
                    Code == other.Code;
@@ -117,9 +121,9 @@ namespace SPE.Engine
             hashCode = hashCode * -1521134295 + R.GetHashCode();
             hashCode = hashCode * -1521134295 + G.GetHashCode();
             hashCode = hashCode * -1521134295 + B.GetHashCode();
-            hashCode = hashCode * -1521134295 + FG.GetHashCode();
-            hashCode = hashCode * -1521134295 + BG.GetHashCode();
-            hashCode = hashCode * -1521134295 + PT.GetHashCode();
+            hashCode = hashCode * -1521134295 + Foreground.GetHashCode();
+            hashCode = hashCode * -1521134295 + Background.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pixal.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Hex);
             hashCode = hashCode * -1521134295 + EqualityComparer<Color>.Default.GetHashCode(Color);
             hashCode = hashCode * -1521134295 + Code.GetHashCode();
@@ -132,7 +136,7 @@ namespace SPE.Engine
         }
     }
 
-
+    [Serializable]
     public class TransparentColour : Colour {
         public override Brush Brush => new DrawingBrush
         {
@@ -143,7 +147,10 @@ namespace SPE.Engine
                 new Pen(), Geometry.Parse("M0,0 H16 V16 H32 V32 H16 V16 H0Z"))
         };
 
-        public TransparentColour(int r, int g, int b, int a, Colours fg, Colours bg, Pixal type) : base(r, g, b, a, fg, bg, type)
+        public TransparentColour() : base()
+        { }
+
+        public TransparentColour(int r, int g, int b, int a, Colours foreground, Colours background, Pixal type) : base(r, g, b, a, foreground, background, type)
         {
         }
     }

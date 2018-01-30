@@ -185,7 +185,7 @@ namespace SPE
                                   $"RGB: {c.R},{c.G},{c.B}" +
                                   $"{(c.A < 255 ? $"{Environment.NewLine}Transparent" : "")}{Environment.NewLine}" +
                                   $"IDX: {colorIdx}{Environment.NewLine}" +
-                                  $"Pixal: {(char)c.PT}",
+                                  $"Pixal: {(char)c.Pixal}",
                         Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255))
                     };
 
@@ -258,7 +258,7 @@ namespace SPE
                         var rrT = (ToolTip) rr.ToolTip;
                         rrT.Content += $"POS: {rr.Tag}" +
                                        $"{Environment.NewLine}Hex: #{rectColour.Hex}" +
-                                       $"{Environment.NewLine}Pixal: {(char)rectColour.PT}";
+                                       $"{Environment.NewLine}Pixal: {(char)rectColour.Pixal}";
                         rect.Stroke = _hoverBrush;
                     };
 
@@ -347,7 +347,7 @@ namespace SPE
 
             rect.Fill = c.Brush;
             LoadedSprite.SetColour(i1, j1, c);
-            LoadedSprite.SetGlyph(i1, j1, c.PT);
+            LoadedSprite.SetGlyph(i1, j1, c.Pixal);
         }
 
         private void FileOptionClicked(object sender, ExecutedRoutedEventArgs e)

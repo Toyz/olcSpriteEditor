@@ -6,31 +6,14 @@ namespace SPE.Engine
 {
     public static class ColourHandler
     {
-        public static List<Colour> Colours { get; }
-        private static List<Colour> AllColours { get; }
+        public static List<Colour> Colours { get; set; }
+        private static List<Colour> AllColours { get; set; }
 
         static ColourHandler()
         {
-            Colours = AllColours = new List<Colour>();
+            if (AllColours != null) return;
 
-            if (Colours.Count <= 0)
-            {
-                foreach (var line in File.ReadAllLines("./colours.txt"))
-                {
-                    if (line.StartsWith("#") || string.IsNullOrEmpty(line)) continue;
-
-                    AllColours.Add(new Colour(line));
-                }
-
-                //Colours.Sort(SortColors);
-
-                // TODO: Fix Sorting by color
-                // Colours.Sort(SortColors2);
-            }
-
-            Colours.Insert(0, new TransparentColour(0, 0, 0, 0, Engine.Colours.BG_BLACK, Engine.Colours.BG_BLACK, Pixal.PIXEL_SPACE));
-
-            Colours = new List<Colour>(AllColours);
+            LoadColours();
         }
 
         public static void SwapColours(bool all)
@@ -53,7 +36,7 @@ namespace SPE.Engine
 
         public static Colour ByHex(string hex, Pixal pixal)
         {
-            return Colours.FirstOrDefault(x => x.Hex.Equals(hex) && x.PT == pixal);
+            return Colours.FirstOrDefault(x => x.Hex.Equals(hex) && x.Pixal == pixal);
         }
 
         public static Colour ByHex(string hex)
@@ -78,27 +61,19 @@ namespace SPE.Engine
 
         public static Colour ByCode(short code, Pixal pixal)
         {
-            return Colours.FirstOrDefault(x => x.Code == code && x.PT == pixal);
+            return Colours.FirstOrDefault(x => x.Code == code && x.Pixal == pixal);
         }
 
-        private static int SortColors(Colour a, Colour b) => a.Color.GetBrightness().CompareTo(b.Color.GetBrightness());
-
-        private static int SortColors2(Colour a, Colour b)
+        private static void LoadColours()
         {
-            if (a.R < b.R)
-                return -1;
-            if (a.R > b.R)
-                return 1;
-            if (a.G < b.G)
-                return -1;
-            if (a.G > b.G)
-                return 1;
-            if (a.B < b.B)
-                return -1;
-            if (a.B > b.B)
-                return 1;
+            using (Stream stream = File.Open("colours.bin", FileMode.Open))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
-            return 0;
+                AllColours = (List<Colour>)bformatter.Deserialize(stream);
+            }
+
+            Colours = new List<Colour>(AllColours);
         }
     }
 }

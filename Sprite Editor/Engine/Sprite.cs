@@ -115,7 +115,7 @@ namespace SPE.Engine
 
                 for (var i = 0; i < Width * Height; i++)
                 {
-                    var pixal = (short)ColourHandler.ByCode(Colours[i], (Pixal)Glyphs[i]).PT;
+                    var pixal = (short)ColourHandler.ByCode(Colours[i], (Pixal)Glyphs[i]).Pixal;
                     writer.Write(pixal);
                 }
 
