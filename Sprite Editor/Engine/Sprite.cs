@@ -38,12 +38,12 @@ namespace SPE.Engine
 
             Colours = new short[Width * Height];
 
-            var black = ColourHandler.ByHex("FF000000", Pixal.PIXEL_SOLID);
+            var black = ColourHandler.ByHex("00000000", Pixal.PIXEL_SPACE);
         
             for (var i = 0; i < Colours.Length; i++) Colours[i] = black.Code;
 
             Glyphs = new short[Width * Height];
-            for (var i = 0; i < Glyphs.Length; i++) Glyphs[i] = (int)Pixal.PIXEL_SOLID;
+            for (var i = 0; i < Glyphs.Length; i++) Glyphs[i] = (int)Pixal.PIXEL_SPACE;
 
             StartAutoSaving();
         }

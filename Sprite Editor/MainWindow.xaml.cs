@@ -73,7 +73,7 @@ namespace SPE
 
             WindowDataContext.PropertyChanged += WindowDataContextOnPropertyChanged;
             WindowDataContext.SpriteBlockSize =
-                WindowDataContext.AllowedSpriteSizes.First(x => x.Size == Default.SpriteCellSize);    //WindowDataContext.AllowedSpriteSizes[Default.SpriteCellSize];
+                WindowDataContext.AllowedSpriteSizes.First(x => x.Size == Default.SpriteCellSize);
 
             for(var i = 0; i < WindowDataContext.AllowedSpriteSizes.Length; i++)
             {
@@ -112,7 +112,7 @@ namespace SPE
         {
             var size = 32;
 
-            _activeColour = ColourHandler.ByHex("FF000000", Pixal.PIXEL_SOLID);
+            _activeColour = ColourHandler.ByHex("00000000", Pixal.PIXEL_SPACE);
 
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
