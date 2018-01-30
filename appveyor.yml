@@ -4,3 +4,6 @@ build:
   project: olcEngineSpriteEditor.sln
   parallel: true
   verbosity: minimal
+artifacts:
+- path: Sprite Editor\bin\Debug\
+  name: Editor
