@@ -61,7 +61,6 @@
     <Compile Include="Controls\NumberPicker.xaml.cs">
       <DependentUpon>NumberPicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Engine\IntToCellSize.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Dialogs\NewSpriteDialog.xaml.cs">

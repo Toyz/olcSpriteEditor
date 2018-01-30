@@ -133,21 +133,17 @@ namespace SPE.Engine
     }
 
 
-    public class ColourTrans : Colour {
+    public class TransparentColour : Colour {
         public override Brush Brush => new DrawingBrush
         {
             TileMode = TileMode.Tile,
             ViewportUnits = BrushMappingMode.Absolute,
             Viewport = new Rect(0, 0, 16, 16),
-            Drawing = new GeometryDrawing(new SolidColorBrush(ColourHandler.Colours[0].Color),
+            Drawing = new GeometryDrawing(new SolidColorBrush(Colors.LightGray),
                 new Pen(), Geometry.Parse("M0,0 H16 V16 H32 V32 H16 V16 H0Z"))
         };
 
-        public ColourTrans(int r, int g, int b, int a, Colours fg, Colours bg, Pixal type) : base(r, g, b, a, fg, bg, type)
-        {
-        }
-
-        public ColourTrans(string line) : base(line)
+        public TransparentColour(int r, int g, int b, int a, Colours fg, Colours bg, Pixal type) : base(r, g, b, a, fg, bg, type)
         {
         }
     }

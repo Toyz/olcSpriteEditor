@@ -432,7 +432,7 @@ namespace SPE
                     if (msgBox == MessageBoxResult.Yes)
                     {
                         Default.Reset();
-                        Application.Current.Exit += delegate (object s, ExitEventArgs ee)
+                        Application.Current.Exit += delegate
                         {
                             Process.Start(Application.ResourceAssembly.Location);
                         };
@@ -477,7 +477,8 @@ namespace SPE
                     for (var j = 0; j < LoadedSprite.Height; j++)
                     {
                         var c = LoadedSprite.GetColour(i, j);
-                        var correctColor = ColourHandler.ByCode(c);
+                        var g = LoadedSprite.GetGlyph(i, j);
+                        var correctColor = ColourHandler.ByCode(c, (Pixal)g);
 
                         flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), 
                             new RectangleF(i * WindowDataContext.SpriteBlockSize.Size, 
