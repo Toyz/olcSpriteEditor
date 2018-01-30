@@ -12,6 +12,10 @@ namespace SPE
         private bool _modeAllColours;
         private bool _modeSystemColours;
 
+        // This is the default block size for the sprite
+        private CellSize _spriteBlockSize;
+        private int _selectedSpriteIndex;
+
         public string CurrentSystemTool
         {
             get => _currentSystemTool;
@@ -58,6 +62,31 @@ namespace SPE
             set
             {
                 _currentProgramStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public CellSize SpriteBlockSize
+        {
+            get => _spriteBlockSize;
+            set
+            {
+                _spriteBlockSize = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public CellSize[] AllowedSpriteSizes => new[]
+        {
+            new CellSize("8 x 8", 8), new CellSize("16 x 16", 16), new CellSize("32 x 32", 32), new CellSize("64 x 64", 64),  
+        };
+
+        public int SelectedSpriteIndex
+        {
+            get => _selectedSpriteIndex;
+            set
+            {
+                _selectedSpriteIndex = value;
                 OnPropertyChanged();
             }
         }

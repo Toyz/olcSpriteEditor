@@ -38,5 +38,7 @@ namespace SPE
         public static readonly RoutedCommand ShowAllColours = new RoutedUICommand("Show All Colours", "ShowAllColours", typeof(MenuItem), null);
 
         public static readonly RoutedCommand ShowSystemColours = new RoutedUICommand("Show System Colours", "ShowSystemColours", typeof(MenuItem), null);
+
+        public static readonly RoutedCommand ResetSystemSettings = new RoutedUICommand("Reset Settings", "ResetSystemSettings", typeof(MenuItem), null);
     }
 }

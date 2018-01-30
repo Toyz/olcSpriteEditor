@@ -4,8 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SPE"
+        xmlns:engine="clr-namespace:SPE.Engine"
         mc:Ignorable="d"
         Title="Sprite Editor for OLC - Neon" Height="600" Width="800" MinHeight="600" MinWidth="800" WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <engine:IntToCellSize x:Key="IntToCell" />
+    </Window.Resources>
+
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:WindowCommands.OpenCommand}" Executed="FileOptionClicked"/>
         <CommandBinding Command="{x:Static local:WindowCommands.SaveCommand}" Executed="FileOptionClicked"/>
@@ -16,6 +22,7 @@
         <CommandBinding Command="{x:Static local:WindowCommands.NewCommand}" Executed="FileOptionClicked"/>
         <CommandBinding Command="{x:Static local:WindowCommands.ShowSystemColours}" Executed="FileOptionClicked"/>
         <CommandBinding Command="{x:Static local:WindowCommands.ShowAllColours}" Executed="FileOptionClicked"/>
+        <CommandBinding Command="{x:Static local:WindowCommands.ResetSystemSettings}" Executed="FileOptionClicked"/>
     </Window.CommandBindings>
     <Grid>
         <DockPanel>
@@ -41,8 +48,21 @@
                     <Separator />
                     <MenuItem IsCheckable="True" IsChecked="{Binding Path=ToggleCanvasGrid}" Command="{x:Static local:WindowCommands.ToggleGridCommand}"/>
                 </MenuItem>
+                
+                <MenuItem Header="Help">
+                    <MenuItem Command="{x:Static local:WindowCommands.ResetSystemSettings}"/>
+                </MenuItem>
             </Menu>
             <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <ComboBox Name="SpriteCellSize" Width="75" SelectedValue="{Binding SpriteBlockSize, Mode=TwoWay}" SelectedItem="{Binding SpriteBlockSize, Mode=TwoWay}" ItemsSource="{Binding Path=AllowedSpriteSizes}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StatusBarItem>
                 <StatusBarItem>
                     <TextBlock Text="{Binding Path=CurrentProgramStatus}" />
                 </StatusBarItem>

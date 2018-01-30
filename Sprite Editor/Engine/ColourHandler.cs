@@ -28,7 +28,7 @@ namespace SPE.Engine
                 // Colours.Sort(SortColors2);
             }
 
-            Colours.Insert(0, new Colour(0, 0, 0, 150, Engine.Colours.BG_BLACK, Engine.Colours.BG_BLACK, Pixal.PIXEL_SPACE));
+            Colours.Insert(0, new ColourTrans(0, 0, 0, 150, Engine.Colours.BG_BLACK, Engine.Colours.BG_BLACK, Pixal.PIXEL_SPACE));
 
             Colours = new List<Colour>(AllColours);
         }

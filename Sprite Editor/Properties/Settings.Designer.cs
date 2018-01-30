@@ -72,13 +72,25 @@ namespace SPE.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowAllColours {
             get {
                 return ((bool)(this["ShowAllColours"]));
             }
             set {
                 this["ShowAllColours"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("32")]
+        public int SpriteCellSize {
+            get {
+                return ((int)(this["SpriteCellSize"]));
+            }
+            set {
+                this["SpriteCellSize"] = value;
             }
         }
     }

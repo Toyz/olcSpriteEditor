@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Media;
 
 namespace SPE.Engine
@@ -89,6 +90,7 @@ namespace SPE.Engine
         public string Hex => $"{A:X2}{R:X2}{G:X2}{B:X2}";
         public Color Color => Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
         public short Code => (short) (A == 255 ? (short)((byte)BG | (byte)FG) : 0);
+        public virtual Brush Brush => new SolidColorBrush(Color);
 
         public override bool Equals(object obj)
         {
@@ -127,6 +129,26 @@ namespace SPE.Engine
         public override string ToString()
         {
             return $"HEX: {Hex} RGB: {R}, {G}, {B} Code: {Code}";
+        }
+    }
+
+
+    public class ColourTrans : Colour {
+        public override Brush Brush => new DrawingBrush
+        {
+            TileMode = TileMode.Tile,
+            ViewportUnits = BrushMappingMode.Absolute,
+            Viewport = new Rect(0, 0, 16, 16),
+            Drawing = new GeometryDrawing(new SolidColorBrush(ColourHandler.Colours[0].Color),
+                new Pen(), Geometry.Parse("M0,0 H16 V16 H32 V32 H16 V16 H0Z"))
+        };
+
+        public ColourTrans(int r, int g, int b, int a, Colours fg, Colours bg, Pixal type) : base(r, g, b, a, fg, bg, type)
+        {
+        }
+
+        public ColourTrans(string line) : base(line)
+        {
         }
     }
 }

@@ -8,7 +8,6 @@ namespace SPE.Engine
     public class Sprite : IEquatable<Sprite>
     {
         private readonly MainWindow _mainWindow;
-        public static int SpriteBlockSize { get; } = 32;
 
         public bool FailedToLoad { get; }
         public int Width { get; private set; }
@@ -145,7 +144,7 @@ namespace SPE.Engine
 
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show("Corrupted sprite has been detected...", "Failed to load", MessageBoxButton.OK,
                     MessageBoxImage.Error);

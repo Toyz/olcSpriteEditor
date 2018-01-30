@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -35,9 +37,15 @@ namespace SPE
         private readonly Brush _hoverBrush = new SolidColorBrush(Colors.Brown);
         private readonly Brush _activeColor = new SolidColorBrush(Colors.Red);
 
+        private bool _firstBoot = true;
 
         public MainWindow()
         {
+            /*
+            if (Debugger.IsAttached)
+                Default.Reset();
+            */
+
             InitializeComponent();
 
             DataContext = WindowDataContext;
@@ -46,9 +54,7 @@ namespace SPE
 
             WindowDataContext.ToggleCanvasGrid = Default.UseGridOnCanvas;
 
-           
             LoadedSprite = new Sprite(10, 10, this);
-            UpdateCanvas();
 
             WindowDataContext.CurrentProgramStatus = "Loaded Empty Sprite";
 
@@ -64,18 +70,55 @@ namespace SPE
             }
 
             CreateColorPalletWindow();
+
+            WindowDataContext.PropertyChanged += WindowDataContextOnPropertyChanged;
+            WindowDataContext.SpriteBlockSize =
+                WindowDataContext.AllowedSpriteSizes.First(x => x.Size == Default.SpriteCellSize);    //WindowDataContext.AllowedSpriteSizes[Default.SpriteCellSize];
+
+            for(var i = 0; i < WindowDataContext.AllowedSpriteSizes.Length; i++)
+            {
+                if (WindowDataContext.AllowedSpriteSizes[i].Size == WindowDataContext.SpriteBlockSize.Size)
+                {
+                    SpriteCellSize.SelectedIndex = i;
+                    break;
+                }
+            }
+
+            UpdateCanvas();
+        }
+
+        private void WindowDataContextOnPropertyChanged(object o, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (_firstBoot)
+            {
+                _firstBoot = false;
+                return;
+            }
+
+            if (propertyChangedEventArgs.PropertyName.Equals(nameof(WindowDataContext.SpriteBlockSize)))
+            {
+                SpriteViewCanvas.Children.Clear();
+                UpdateCanvas();
+
+                if (Default.SpriteCellSize != WindowDataContext.SpriteBlockSize.Size)
+                {
+                    Default.SpriteCellSize = WindowDataContext.SpriteBlockSize.Size;
+                    Default.Save();
+                }
+            }
         }
 
         private void CreateColorPalletWindow()
         {
+            var size = 32;
+
             _activeColour = ColourHandler.ByHex("FF000000", Pixal.PIXEL_SOLID);
 
             ColorViewCanvas.Width = ColorScrollViewer.Width;
 
-            var width = (int)(ColorViewCanvas.Width / Sprite.SpriteBlockSize);
+            var width = (int)(ColorViewCanvas.Width / size);
             var height = (int)Math.Ceiling((decimal)ColourHandler.Colours.Count / width);
-            Console.WriteLine(height);
-            ColorViewCanvas.Height = height * Sprite.SpriteBlockSize;
+            ColorViewCanvas.Height = height * size;
 
             var colorIdx = 0;
             for (var j = 0; j < height; j++)
@@ -91,9 +134,9 @@ namespace SPE
 
                     var rect = new Rectangle
                     {
-                        Width = Sprite.SpriteBlockSize,
-                        Height = Sprite.SpriteBlockSize,
-                        Fill = new SolidColorBrush(c.Color),
+                        Width = size,
+                        Height = size,
+                        Fill = c.Brush,
                         Stroke = _colorBorder,
                         StrokeThickness = 1.2
                     };
@@ -116,6 +159,9 @@ namespace SPE
 
                     rect.MouseUp += (sender, args) =>
                     {
+                        _isLeftClickHeldDown = false;
+                        _isRightClickHeldDown = false;
+
                         var p = (Rectangle)sender;
 
                         p.Stroke = _activeColor;
@@ -151,9 +197,8 @@ namespace SPE
                     }
 
                     ColorViewCanvas.Children.Add(rect);
-                    Canvas.SetLeft(rect, i * Sprite.SpriteBlockSize);
-                    Canvas.SetTop(rect, j * Sprite.SpriteBlockSize);
-
+                    Canvas.SetLeft(rect, i * size);
+                    Canvas.SetTop(rect, j * size);
 
                     colorIdx++;
                 }
@@ -163,9 +208,10 @@ namespace SPE
         private void UpdateCanvas()
         {
             SpriteViewCanvas.IsEnabled = false;
-            SpriteViewCanvas.Width = LoadedSprite.Width * Sprite.SpriteBlockSize;
-            SpriteViewCanvas.Height = LoadedSprite.Height * Sprite.SpriteBlockSize;
 
+            SpriteViewCanvas.Width = LoadedSprite.Width * WindowDataContext.SpriteBlockSize.Size;
+            SpriteViewCanvas.Height = LoadedSprite.Height * WindowDataContext.SpriteBlockSize.Size;
+                
             for (var column = 0; column < LoadedSprite.Height; column++)
             {
                 for (var row = 0; row < LoadedSprite.Width; row++)
@@ -181,9 +227,9 @@ namespace SPE
                     
                     var rect = new Rectangle
                     {
-                        Width = Sprite.SpriteBlockSize,
-                        Height = Sprite.SpriteBlockSize,
-                        Fill = new SolidColorBrush(correctColor.Color),    
+                        Width = WindowDataContext.SpriteBlockSize.Size,
+                        Height = WindowDataContext.SpriteBlockSize.Size,
+                        Fill = correctColor.Brush,    
                         StrokeThickness = 2
                     };
 
@@ -269,8 +315,8 @@ namespace SPE
                     rect.Tag = $"{(column + 1)}, {(row + 1)}";
 
                     SpriteViewCanvas.Children.Add(rect);
-                    Canvas.SetTop(rect, column * Sprite.SpriteBlockSize);
-                    Canvas.SetLeft(rect, row * Sprite.SpriteBlockSize);
+                    Canvas.SetTop(rect, column * WindowDataContext.SpriteBlockSize.Size);
+                    Canvas.SetLeft(rect, row * WindowDataContext.SpriteBlockSize.Size);
                 }
             }
 
@@ -279,9 +325,12 @@ namespace SPE
 
         private Colour GetColourFromRect(Rectangle rr)
         {
-            var s = (SolidColorBrush) rr.Fill;
-            return ColourHandler.ByRgb(s.Color.R, s.Color.B, s.Color.G, s.Color.A);
+            if (!(rr.Fill is SolidColorBrush s))
+            {
+                return ColourHandler.Colours[0];
+            }
 
+            return ColourHandler.ByRgb(s.Color.R, s.Color.B, s.Color.G, s.Color.A);
         }
 
         private void UpdateRect(Rectangle rect, int i1, int j1, Colour c = null)
@@ -290,7 +339,13 @@ namespace SPE
             {
                 c = _activeColour;
             }
-            rect.Fill = new SolidColorBrush(c.Color);
+
+            if (c.A < 255)
+            {
+                c = ColourHandler.Colours[0];
+            } 
+
+            rect.Fill = c.Brush;
             LoadedSprite.SetColour(i1, j1, c);
             LoadedSprite.SetGlyph(i1, j1, c.PT);
         }
@@ -371,6 +426,20 @@ namespace SPE
                     ColorViewCanvas.Children.Clear();
                     CreateColorPalletWindow();
                     break;
+                case "ResetSystemSettings":
+                    var msgBox = MessageBox.Show("Are you sure you wish to reset the application settings",
+                        "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                    if (msgBox == MessageBoxResult.Yes)
+                    {
+                        Default.Reset();
+                        Application.Current.Exit += delegate (object s, ExitEventArgs ee)
+                        {
+                            Process.Start(Application.ResourceAssembly.Location);
+                        };
+                        Application.Current.Shutdown();
+
+                    }
+                    break;
             }
         }
 
@@ -399,9 +468,9 @@ namespace SPE
             {
                 var file = sfd.FileName;
 
-                Bitmap flag = new Bitmap(LoadedSprite.Width * Sprite.SpriteBlockSize, LoadedSprite.Height * Sprite.SpriteBlockSize);
+                var flag = new Bitmap(LoadedSprite.Width * WindowDataContext.SpriteBlockSize.Size, LoadedSprite.Height * WindowDataContext.SpriteBlockSize.Size);
                 flag.SetResolution(100, 100);
-                Graphics flagGraphics = Graphics.FromImage(flag);
+                var flagGraphics = Graphics.FromImage(flag);
 
                 for (var i = 0; i < LoadedSprite.Width; i++)
                 {
@@ -410,7 +479,11 @@ namespace SPE
                         var c = LoadedSprite.GetColour(i, j);
                         var correctColor = ColourHandler.ByCode(c);
 
-                        flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), new RectangleF(i * Sprite.SpriteBlockSize, j * Sprite.SpriteBlockSize, Sprite.SpriteBlockSize, Sprite.SpriteBlockSize));
+                        flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), 
+                            new RectangleF(i * WindowDataContext.SpriteBlockSize.Size, 
+                                j * WindowDataContext.SpriteBlockSize.Size, 
+                                WindowDataContext.SpriteBlockSize.Size, 
+                                WindowDataContext.SpriteBlockSize.Size));
                     }
                 }
 
