@@ -1,0 +1,7 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+platform: x86
+build:
+  project: olcEngineSpriteEditor.sln
+  parallel: true
+  verbosity: minimal
