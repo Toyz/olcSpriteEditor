@@ -54,7 +54,7 @@ namespace SPE
 
             WindowDataContext.ToggleCanvasGrid = Default.UseGridOnCanvas;
 
-            LoadedSprite = new Sprite(10, 10, this);
+            LoadedSprite = new Sprite(10, 10, null, this);
 
             WindowDataContext.CurrentProgramStatus = "Loaded Empty Sprite";
 
@@ -387,7 +387,7 @@ namespace SPE
                         }
                         else
                         {
-                            LoadedSprite = new Sprite(10, 10, this);
+                            LoadedSprite = new Sprite(10, 10, null, this);
                             SpriteViewCanvas.Children.Clear();
                             UpdateCanvas();
                         }
@@ -497,6 +497,8 @@ namespace SPE
                         flag.Save(file, ImageFormat.Jpeg);
                         break;
                 }
+
+                WindowDataContext.CurrentProgramStatus = $"Exported: {Path.GetFileName(file)}";
             }
         }
 
@@ -605,7 +607,7 @@ namespace SPE
                 if (LoadedSprite.FailedToLoad)
                 {
                     RecentFilesList.Items.Remove(sender);
-                    LoadedSprite = new Sprite(10, 10, this);
+                    LoadedSprite = new Sprite(10, 10, null, this);
                 }
                 else
                 {

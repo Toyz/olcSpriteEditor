@@ -29,7 +29,7 @@ namespace SPE.Dialogs
             switch (name)
             {
                 case "CreateSprite":
-                    _mainWindow.LoadedSprite = new Sprite(NumberPickerWidth.Value, NumberPickerHeight.Value, _mainWindow);
+                    _mainWindow.LoadedSprite = new Sprite(NumberPickerWidth.Value, NumberPickerHeight.Value, ColourHandler.ByHex("00000000", Pixal.PIXEL_SPACE), _mainWindow);
                     Properties.Settings.Default.Create_H = _mainWindow.LoadedSprite.Height;
                     Properties.Settings.Default.Create_W = _mainWindow.LoadedSprite.Width;
 

@@ -29,7 +29,7 @@ namespace SPE.Engine
             StartAutoSaving();
         }
 
-        public Sprite(int width, int height, MainWindow mainWindow)
+        public Sprite(int width, int height, Colour c, MainWindow mainWindow = null)
         {
             _mainWindow = mainWindow;
             Width = width;
@@ -38,9 +38,12 @@ namespace SPE.Engine
 
             Colours = new short[Width * Height];
 
-            var black = ColourHandler.ByHex("00000000", Pixal.PIXEL_SPACE);
-        
-            for (var i = 0; i < Colours.Length; i++) Colours[i] = black.Code;
+            if (c == null)
+            {
+                c = ColourHandler.ByHex("00000000", Pixal.PIXEL_SPACE);
+            }
+
+            for (var i = 0; i < Colours.Length; i++) Colours[i] = c.Code;
 
             Glyphs = new short[Width * Height];
             for (var i = 0; i < Glyphs.Length; i++) Glyphs[i] = (int)Pixal.PIXEL_SPACE;
