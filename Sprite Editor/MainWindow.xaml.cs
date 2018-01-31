@@ -391,6 +391,10 @@ namespace SPE
                             SpriteViewCanvas.Children.Clear();
                             UpdateCanvas();
                         }
+
+#if DEBUG
+                        Console.WriteLine(LoadedSprite);
+#endif
                     }
 
                     break;
@@ -477,8 +481,9 @@ namespace SPE
                     for (var j = 0; j < LoadedSprite.Height; j++)
                     {
                         var c = LoadedSprite.GetColour(i, j);
-                        var g = LoadedSprite.GetGlyph(i, j);
-                        var correctColor = ColourHandler.ByCode(c, (Pixal)g);
+                        var correctColor = ColourHandler.ByCode(c);
+
+                        if(correctColor == null) continue;
 
                         flagGraphics.FillRectangle(correctColor.Color.ToSolidBrush(), 
                             new RectangleF(i * WindowDataContext.SpriteBlockSize.Size, 
